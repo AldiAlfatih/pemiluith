@@ -1,0 +1,189 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+model User {
+  id                   String    @id @default(uuid())
+  nim                  String    @unique
+  name                 String
+  email                String?   @unique
+  passwordHash         String    @map("password_hash")
+  role                 Role      @default(MAHASISWA)
+  programStudy         String?   @map("program_study")
+  className            String?   @map("class_name")
+  phoneNumber          String?   @map("phone_number")
+  studentStatus        String?   @map("student_status")
+  dataConsent          String?   @map("data_consent")
+  importSource         String?   @map("import_source")
+  importBatchId        String?   @map("import_batch_id")
+  registeredAt         DateTime? @map("registered_at")
+  mustChangePassword   Boolean   @default(true) @map("must_change_password")
+  isActive             Boolean   @default(true) @map("is_active")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  votes                Vote[]
+  passwordResetTokens  PasswordResetToken[]
+  createdElections     Election[] @relation("CreatedElections")
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  MAHASISWA
+}
+
+model Election {
+  id                      String    @id @default(uuid())
+  title                   String
+  description             String?   @db.Text
+  type                    ElectionType
+  method                  ElectionMethod
+  minChoices              Int       @default(1) @map("min_choices")
+  maxChoices              Int       @default(1) @map("max_choices")
+  startAt                 DateTime  @map("start_at")
+  endAt                   DateTime  @map("end_at")
+  status                  ElectionStatus @default(DRAFT)
+  showLiveResult          Boolean   @default(false) @map("show_live_result")
+  showResultAfterClosed   Boolean   @default(true) @map("show_result_after_closed")
+  stageType               StageType @default(FINAL) @map("stage_type")
+  parentElectionId        String?   @map("parent_election_id")
+  createdBy               String    @map("created_by")
+  createdAt               DateTime  @default(now()) @map("created_at")
+  updatedAt               DateTime  @updatedAt @map("updated_at")
+
+  creator                 User      @relation("CreatedElections", fields: [createdBy], references: [id])
+  parentElection          Election? @relation("ElectionStages", fields: [parentElectionId], references: [id])
+  childElections          Election[] @relation("ElectionStages")
+  
+  options                 ElectionOption[]
+  candidates              Candidate[]
+  votes                   Vote[]
+
+  @@map("elections")
+}
+
+enum ElectionType {
+  NAMA_ANGKATAN
+  KETUA_ANGKATAN
+  LOGO
+  JAKET
+  POLLING
+}
+
+enum ElectionMethod {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+}
+
+enum ElectionStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+}
+
+enum StageType {
+  PENYARINGAN
+  FINAL
+}
+
+model ElectionOption {
+  id                 String    @id @default(uuid())
+  electionId         String    @map("election_id")
+  name               String
+  meaning            String?   @db.Text
+  philosophy         String?   @db.Text
+  reason             String?   @db.Text
+  mainValue          String?   @map("main_value") @db.Text
+  languageReference  String?   @map("language_reference")
+  proposer           String?
+  imageUrl           String?   @map("image_url")
+  orderNumber        Int       @default(0) @map("order_number")
+  isActive           Boolean   @default(true) @map("is_active")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  election           Election  @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  voteDetails        VoteDetail[]
+
+  @@map("election_options")
+}
+
+model Candidate {
+  id                 String    @id @default(uuid())
+  electionId         String    @map("election_id")
+  name               String
+  nim                String
+  programStudy       String    @map("program_study")
+  photoUrl           String?   @map("photo_url")
+  vision             String?   @db.Text
+  mission            String?   @db.Text
+  description        String?   @db.Text
+  orderNumber        Int       @default(0) @map("order_number")
+  isActive           Boolean   @default(true) @map("is_active")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  election           Election  @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  voteDetails        VoteDetail[]
+
+  @@map("candidates")
+}
+
+model Vote {
+  id                 String    @id @default(uuid())
+  electionId         String    @map("election_id")
+  userId             String    @map("user_id")
+  createdAt          DateTime  @default(now()) @map("created_at")
+
+  election           Election  @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  details            VoteDetail[]
+
+  @@unique([electionId, userId])
+  @@map("votes")
+}
+
+model VoteDetail {
+  id                 String    @id @default(uuid())
+  voteId             String    @map("vote_id")
+  optionId           String?   @map("option_id")
+  candidateId        String?   @map("candidate_id")
+  createdAt          DateTime  @default(now()) @map("created_at")
+
+  vote               Vote            @relation(fields: [voteId], references: [id], onDelete: Cascade)
+  option             ElectionOption? @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  candidate          Candidate?      @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@map("vote_details")
+}
+
+model AuditLog {
+  id                 String    @id @default(uuid())
+  userId             String?   @map("user_id")
+  action             String
+  description        String?   @db.Text
+  ipAddress          String?   @map("ip_address")
+  createdAt          DateTime  @default(now()) @map("created_at")
+
+  @@map("audit_logs")
+}
+
+model PasswordResetToken {
+  id                 String    @id @default(uuid())
+  userId             String    @map("user_id")
+  token              String    @unique
+  expiredAt          DateTime  @map("expired_at")
+  usedAt             DateTime? @map("used_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
+
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
+}

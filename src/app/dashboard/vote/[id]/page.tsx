@@ -1,0 +1,89 @@
+import { prisma } from "@/lib/prisma"
+import { auth } from "@/auth"
+import { notFound, redirect } from "next/navigation"
+import Link from "next/link"
+import VotingClientForm from "./VotingClientForm"
+
+export default async function VotingPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const session = await auth()
+  
+  if (!session || session.user.role !== "MAHASISWA") {
+    redirect("/login")
+  }
+
+  const userId = session.user.id
+
+  // Fetch election with its items
+  const election = await prisma.election.findUnique({
+    where: { id },
+    include: {
+      candidates: { orderBy: { orderNumber: "asc" } },
+      options: { orderBy: { orderNumber: "asc" } }
+    }
+  })
+
+  if (!election) notFound()
+
+  // Verify status and time
+  const now = new Date()
+  const isUpcoming = now < election.startAt
+  const isClosed = now > election.endAt || election.status === "CLOSED"
+  const isActive = !isUpcoming && !isClosed && election.status === "ACTIVE"
+
+  if (!isActive) {
+    return (
+      <div className="max-w-2xl mx-auto mt-12 bg-white border border-gray-200 rounded-xl p-8 text-center">
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Akses Tertutup</h2>
+        <p className="text-gray-500 mb-6">Pemilihan ini sedang tidak aktif, belum dimulai, atau telah berakhir.</p>
+        <Link href="/dashboard" className="text-[#2563EB] font-medium hover:underline">Kembali ke Dasbor</Link>
+      </div>
+    )
+  }
+
+  // Check if user has already voted
+  const existingVote = await prisma.vote.findUnique({
+    where: {
+      electionId_userId: { electionId: id, userId }
+    }
+  })
+
+  if (existingVote) {
+    return (
+      <div className="max-w-2xl mx-auto mt-12 bg-white border border-gray-200 rounded-xl p-8 text-center">
+        <div className="w-16 h-16 bg-green-50 border border-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Suara Telah Diterima</h2>
+        <p className="text-gray-500 mb-6">Anda sudah memberikan suara pada kegiatan pemilihan ini. Terima kasih atas partisipasi Anda!</p>
+        <Link href="/dashboard" className="inline-block bg-[#111827] hover:bg-[#1F2937] text-white font-medium py-2 px-6 rounded-lg transition-colors">
+          Kembali ke Dasbor
+        </Link>
+      </div>
+    )
+  }
+
+  const isCandidateType = election.type === "KETUA_ANGKATAN"
+  const items = isCandidateType ? election.candidates : election.options
+
+  return (
+    <div className="space-y-8 animate-in fade-in duration-500 max-w-5xl mx-auto">
+      <div className="mb-8 border-b border-gray-200 pb-6">
+        <Link href="/dashboard" className="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1.5 mb-6 inline-flex">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          Kembali
+        </Link>
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{election.title}</h1>
+        {election.description && (
+          <p className="text-gray-600 mt-3 text-lg leading-relaxed max-w-3xl">{election.description}</p>
+        )}
+      </div>
+
+      <VotingClientForm election={election} items={items} />
+    </div>
+  )
+}

@@ -1,0 +1,115 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { ArrowLeft, Save } from "lucide-react"
+import { createElection } from "../actions"
+
+export default function CreateElectionPage() {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setLoading(true)
+    setError("")
+
+    try {
+      const formData = new FormData(e.currentTarget)
+      await createElection(formData)
+      router.push("/admin/elections")
+    } catch (err: any) {
+      setError(err.message || "Gagal membuat pemilihan")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="max-w-3xl mx-auto space-y-6">
+      <div className="flex items-center gap-4">
+        <Link href="/admin/elections" className="p-2 bg-white rounded-full shadow-sm hover:bg-slate-50 transition-colors">
+          <ArrowLeft size={20} className="text-slate-600" />
+        </Link>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Buat Kegiatan Voting Baru</h1>
+          <p className="text-sm text-slate-500">Atur rincian dan jadwal pemilihan.</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {error && <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold border border-red-100">{error}</div>}
+          
+          <div className="space-y-2">
+            <label className="block text-sm font-bold text-slate-700">Judul Voting <span className="text-red-500">*</span></label>
+            <input type="text" name="title" required className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="Contoh: Pemilihan Ketua Angkatan 1" />
+          </div>
+          
+          <div className="space-y-2">
+            <label className="block text-sm font-bold text-slate-700">Deskripsi / Keterangan</label>
+            <textarea name="description" rows={3} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" placeholder="Tuliskan keterangan singkat mengenai voting ini..."></textarea>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-slate-700">Jenis Kegiatan <span className="text-red-500">*</span></label>
+              <select name="type" required className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none bg-white">
+                <option value="KETUA_ANGKATAN">Ketua Angkatan (Kandidat Personal)</option>
+                <option value="NAMA_ANGKATAN">Nama Angkatan (Opsi Nama & Filosofi)</option>
+                <option value="LOGO">Logo Angkatan</option>
+                <option value="POLLING">Polling Umum</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-slate-700">Metode Pemilihan <span className="text-red-500">*</span></label>
+              <select name="method" required onChange={(e) => {
+                const el = document.getElementById('multipleChoiceSettings')
+                if (el) el.style.display = e.target.value === 'MULTIPLE_CHOICE' ? 'grid' : 'none'
+              }} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none bg-white">
+                <option value="SINGLE_CHOICE">Pilih Satu (Single Choice)</option>
+                <option value="MULTIPLE_CHOICE">Pilih Banyak (Multiple Choice)</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="multipleChoiceSettings" className="grid-cols-1 sm:grid-cols-2 gap-6 hidden bg-blue-50 p-6 rounded-xl border border-blue-100">
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-slate-700">Minimal Pilihan <span className="text-red-500">*</span></label>
+              <input type="number" name="minChoices" min="1" defaultValue="1" className="w-full px-4 py-3 rounded-xl border border-blue-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all bg-white" />
+              <p className="text-xs text-slate-500">Jumlah minimal opsi yang harus dicentang mahasiswa.</p>
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-slate-700">Maksimal Pilihan <span className="text-red-500">*</span></label>
+              <input type="number" name="maxChoices" min="1" defaultValue="1" className="w-full px-4 py-3 rounded-xl border border-blue-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all bg-white" />
+              <p className="text-xs text-slate-500">Batas maksimal opsi yang bisa dicentang mahasiswa.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-slate-700">Waktu Dimulai <span className="text-red-500">*</span></label>
+              <input type="datetime-local" name="startAt" required className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-slate-700">Waktu Ditutup <span className="text-red-500">*</span></label>
+              <input type="datetime-local" name="endAt" required className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+            </div>
+          </div>
+
+          <div className="pt-6 border-t border-slate-100 flex justify-end">
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all disabled:opacity-50 shadow-sm shadow-blue-500/30 hover:-translate-y-0.5"
+            >
+              <Save size={18} /> {loading ? "Menyimpan..." : "Lanjut Tambah Kandidat"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
