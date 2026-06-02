@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
+import Swal from "sweetalert2"
 
 export default function ForceChangePasswordPage() {
   const router = useRouter()
@@ -40,10 +41,18 @@ export default function ForceChangePasswordPage() {
       // Update session to reflect mustChangePassword = false
       await update({ mustChangePassword: false })
       
+      await Swal.fire({
+        title: 'Berhasil!',
+        text: 'Password Anda telah berhasil diperbarui.',
+        icon: 'success',
+        confirmButtonColor: '#2563EB',
+        confirmButtonText: 'Lanjut ke Dashboard'
+      })
+
       router.push("/dashboard")
       router.refresh()
     } catch (err: any) {
-      setError(err.message || "Gagal mengubah password")
+      Swal.fire('Error', err.message || "Gagal mengubah password", 'error')
     } finally {
       setLoading(false)
     }
