@@ -7,9 +7,9 @@ import StudentFilters from "./StudentFilters"
 export default async function StudentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string }>
+  searchParams: Promise<{ q?: string; status?: string; sort?: string }>
 }) {
-  const { q, status } = await searchParams
+  const { q, status, sort } = await searchParams
 
   const whereClause: any = { role: "MAHASISWA" }
 
@@ -26,10 +26,17 @@ export default async function StudentsPage({
     whereClause.isActive = false
   }
 
+  // Handle Sorting
+  let orderByClause: any = { nim: "asc" }
+  if (sort === "nim_desc") orderByClause = { nim: "desc" }
+  else if (sort === "name_asc") orderByClause = { name: "asc" }
+  else if (sort === "name_desc") orderByClause = { name: "desc" }
+  else if (sort === "newest") orderByClause = { createdAt: "desc" }
+
   const [students, totalStudents, activeStudents, newStudents] = await Promise.all([
     prisma.user.findMany({
       where: whereClause,
-      orderBy: { nim: "asc" }
+      orderBy: orderByClause
     }),
     prisma.user.count({ where: { role: "MAHASISWA" } }),
     prisma.user.count({ where: { role: "MAHASISWA", isActive: true } }),

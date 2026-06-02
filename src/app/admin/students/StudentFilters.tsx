@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import { Search, Filter } from "lucide-react"
+import { Search, Filter, ArrowUpDown } from "lucide-react"
 import { useTransition } from "react"
 
 export default function StudentFilters() {
@@ -28,6 +28,19 @@ export default function StudentFilters() {
       params.set("status", status)
     } else {
       params.delete("status")
+    }
+    
+    startTransition(() => {
+      router.replace(`/admin/students?${params.toString()}`)
+    })
+  }
+
+  const handleSortChange = (sort: string) => {
+    const params = new URLSearchParams(searchParams)
+    if (sort) {
+      params.set("sort", sort)
+    } else {
+      params.delete("sort")
     }
     
     startTransition(() => {
@@ -65,6 +78,23 @@ export default function StudentFilters() {
           <option value="">Semua Status</option>
           <option value="active">Aktif</option>
           <option value="inactive">Nonaktif</option>
+        </select>
+      </div>
+      <div className="relative sm:w-48">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <ArrowUpDown className="h-4 w-4 text-slate-400" />
+        </div>
+        <select
+          className="block w-full pl-9 pr-8 py-2 border border-slate-200 rounded-xl leading-5 bg-slate-50 text-slate-700 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm appearance-none cursor-pointer transition-all"
+          defaultValue={searchParams.get("sort")?.toString() || ""}
+          onChange={(e) => handleSortChange(e.target.value)}
+        >
+          <option value="">Urutkan (Default)</option>
+          <option value="nim_asc">NIM (A-Z)</option>
+          <option value="nim_desc">NIM (Z-A)</option>
+          <option value="name_asc">Nama (A-Z)</option>
+          <option value="name_desc">Nama (Z-A)</option>
+          <option value="newest">Terbaru Ditambahkan</option>
         </select>
       </div>
     </div>
