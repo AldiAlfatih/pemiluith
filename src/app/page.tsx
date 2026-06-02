@@ -10,8 +10,8 @@ export default function Home() {
       <div className="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-sky-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
 
       <div className="max-w-md w-full bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/50 p-10 text-center animate-in fade-in slide-in-from-bottom-8 duration-700 z-10 relative">
-        <div className="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/30 transform -rotate-3 hover:rotate-3 transition-transform duration-300">
-          <Vote className="w-10 h-10 text-white" />
+        <div className="w-24 h-24 mx-auto mb-6 transform -rotate-2 hover:rotate-2 transition-transform duration-300">
+          <img src="/logo.png" alt="Logo ITH" className="w-full h-full object-contain drop-shadow-xl" />
         </div>
         
         <h1 className="text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">
