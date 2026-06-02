@@ -7,12 +7,15 @@ import { submitVote } from "./actions"
 type Item = {
   id: string
   name: string
-  nim?: string
-  programStudy?: string
-  vision?: string
-  mission?: string
-  philosophy?: string
-  meaning?: string
+  nim?: string | null
+  programStudy?: string | null
+  vision?: string | null
+  mission?: string | null
+  philosophy?: string | null
+  meaning?: string | null
+  description?: string | null
+  photoUrl?: string | null
+  orderNumber?: number
 }
 
 export default function VotingClientForm({ 
