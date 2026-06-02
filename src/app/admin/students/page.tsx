@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
-import { Users, Upload, Plus, Pencil } from "lucide-react"
+import { Users, Upload, Plus, Pencil, UserCheck, UserPlus } from "lucide-react"
 import StudentActions from "./StudentActions"
 import StudentFilters from "./StudentFilters"
 
@@ -26,10 +26,15 @@ export default async function StudentsPage({
     whereClause.isActive = false
   }
 
-  const students = await prisma.user.findMany({
-    where: whereClause,
-    orderBy: { nim: "asc" }
-  })
+  const [students, totalStudents, activeStudents, newStudents] = await Promise.all([
+    prisma.user.findMany({
+      where: whereClause,
+      orderBy: { nim: "asc" }
+    }),
+    prisma.user.count({ where: { role: "MAHASISWA" } }),
+    prisma.user.count({ where: { role: "MAHASISWA", isActive: true } }),
+    prisma.user.count({ where: { role: "MAHASISWA", mustChangePassword: true } })
+  ])
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -53,6 +58,37 @@ export default async function StudentsPage({
             <Upload size={18} />
             Import Excel
           </Link>
+        </div>
+      </div>
+      
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+            <Users size={24} />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-slate-500">Total Mahasiswa</p>
+            <p className="text-2xl font-bold text-slate-900">{totalStudents}</p>
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-green-600">
+            <UserCheck size={24} />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-slate-500">Status Aktif</p>
+            <p className="text-2xl font-bold text-slate-900">{activeStudents}</p>
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600">
+            <UserPlus size={24} />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-slate-500">Belum Login (Baru)</p>
+            <p className="text-2xl font-bold text-slate-900">{newStudents}</p>
+          </div>
         </div>
       </div>
       
