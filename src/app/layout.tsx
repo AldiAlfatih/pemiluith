@@ -32,10 +32,17 @@ export default function RootLayout({
         <Providers>
           {children}
           {/* OgiTech Watermark */}
-          <div className="fixed bottom-4 right-4 z-[9999] pointer-events-none flex items-center gap-2 bg-white/60 backdrop-blur-md px-3 py-1.5 rounded-full shadow-sm border border-white/50 transition-all duration-300">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Built By</span>
-            <img src="/logo_ogitech_clean.png" alt="OgiTech" className="h-4 w-auto object-contain drop-shadow-sm opacity-90" />
-          </div>
+          <a 
+            href="https://ogitech.my.id" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="fixed bottom-4 right-4 z-[9999] flex items-center gap-2 bg-white/80 hover:bg-white backdrop-blur-md px-4 py-2 rounded-full shadow-sm hover:shadow-lg border border-slate-200 transition-all duration-300 hover:-translate-y-1 group"
+          >
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest group-hover:text-blue-600 transition-colors">
+              Built By <span className="text-slate-800 group-hover:text-blue-700">OgiTech</span>
+            </span>
+            <img src="/logo_ogitech_clean.png" alt="OgiTech Logo" className="h-5 w-auto object-contain drop-shadow-sm group-hover:drop-shadow-md transition-all" />
+          </a>
         </Providers>
       </body>
     </html>
