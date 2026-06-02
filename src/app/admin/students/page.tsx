@@ -2,10 +2,32 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { Users, Upload, Plus, Pencil } from "lucide-react"
 import StudentActions from "./StudentActions"
+import StudentFilters from "./StudentFilters"
 
-export default async function StudentsPage() {
+export default async function StudentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; status?: string }>
+}) {
+  const { q, status } = await searchParams
+
+  const whereClause: any = { role: "MAHASISWA" }
+
+  if (q) {
+    whereClause.OR = [
+      { name: { contains: q, mode: "insensitive" } },
+      { nim: { contains: q, mode: "insensitive" } },
+    ]
+  }
+
+  if (status === "active") {
+    whereClause.isActive = true
+  } else if (status === "inactive") {
+    whereClause.isActive = false
+  }
+
   const students = await prisma.user.findMany({
-    where: { role: "MAHASISWA" },
+    where: whereClause,
     orderBy: { nim: "asc" }
   })
 
@@ -33,6 +55,8 @@ export default async function StudentsPage() {
           </Link>
         </div>
       </div>
+      
+      <StudentFilters />
       
       <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">

@@ -4,16 +4,29 @@ import Link from "next/link"
 import { Calendar, CheckCircle, Clock, ChevronRight, Vote } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
+import DashboardSearch from "./DashboardSearch"
 
-export default async function StudentDashboardPage() {
+export default async function StudentDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>
+}) {
+  const { q } = await searchParams
   const session = await auth()
   const userId = session?.user.id as string
 
+  // Build query
+  const whereClause: any = {
+    status: { in: ["ACTIVE", "CLOSED"] }
+  }
+
+  if (q) {
+    whereClause.title = { contains: q, mode: "insensitive" }
+  }
+
   // Fetch active and upcoming elections
   const elections = await prisma.election.findMany({
-    where: {
-      status: { in: ["ACTIVE", "CLOSED"] }
-    },
+    where: whereClause,
     orderBy: { startAt: "desc" },
     include: {
       votes: {
@@ -40,13 +53,14 @@ export default async function StudentDashboardPage() {
       
       {/* Elections Section */}
       <div>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-50/80 p-1.5 rounded-lg border border-blue-100">
               <img src="/check-icon.png" alt="Icon" className="w-full h-full object-contain" />
             </div>
             Daftar Kegiatan Pemilihan
           </h2>
+          <DashboardSearch />
         </div>
         
         {elections.length === 0 ? (
