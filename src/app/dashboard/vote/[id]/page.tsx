@@ -83,7 +83,7 @@ export default async function VotingPage({ params }: { params: Promise<{ id: str
         )}
       </div>
 
-      <VotingClientForm election={election} items={items} />
+      <VotingClientForm election={election} items={items as any} />
     </div>
   )
 }
