@@ -4,32 +4,62 @@ import { useState } from "react"
 import Link from "next/link"
 import { closeElectionEarly, deleteElection } from "./actions"
 import { Ban, Trash2, Edit } from "lucide-react"
+import Swal from "sweetalert2"
 
 export default function ElectionActionButtons({ electionId, isActive }: { electionId: string, isActive: boolean }) {
   const [loading, setLoading] = useState(false)
 
   const handleCancel = async () => {
-    if (!confirm("Apakah Anda yakin ingin membatalkan dan menutup pemilihan ini sekarang? Suara yang telah masuk akan tetap tersimpan tetapi mahasiswa tidak bisa lagi memberikan suara.")) return
+    const result = await Swal.fire({
+      title: 'Tutup Pemilihan?',
+      text: "Apakah Anda yakin ingin membatalkan dan menutup pemilihan ini sekarang? Suara yang telah masuk akan tetap tersimpan tetapi mahasiswa tidak bisa lagi memberikan suara.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#F59E0B',
+      cancelButtonColor: '#6B7280',
+      confirmButtonText: 'Ya, Tutup Sekarang',
+      cancelButtonText: 'Batal'
+    })
+    
+    if (!result.isConfirmed) return
     
     setLoading(true)
     try {
       await closeElectionEarly(electionId)
+      Swal.fire('Berhasil', 'Pemilihan telah ditutup.', 'success')
     } catch (err: any) {
-      alert(err.message || "Gagal menutup pemilihan")
+      Swal.fire('Error', err.message || "Gagal menutup pemilihan", 'error')
     } finally {
       setLoading(false)
     }
   }
 
   const handleDelete = async () => {
-    const userInput = prompt('Ketik "HAPUS" untuk menghapus seluruh data pemilihan ini secara permanen beserta suaranya.')
+    const { value: userInput } = await Swal.fire({
+      title: 'Hapus Pemilihan?',
+      html: 'Ketik <b>HAPUS</b> untuk menghapus seluruh data pemilihan ini secara permanen beserta suaranya.',
+      input: 'text',
+      icon: 'error',
+      showCancelButton: true,
+      confirmButtonColor: '#EF4444',
+      cancelButtonColor: '#6B7280',
+      confirmButtonText: 'Hapus Permanen',
+      cancelButtonText: 'Batal',
+      inputValidator: (value) => {
+        if (value !== "HAPUS") {
+          return 'Anda harus mengetik "HAPUS" untuk mengkonfirmasi!'
+        }
+      }
+    })
+
     if (userInput !== "HAPUS") return
 
     setLoading(true)
     try {
       await deleteElection(electionId)
+      Swal.fire('Terhapus!', 'Data pemilihan telah dihapus.', 'success')
     } catch (err: any) {
-      alert(err.message || "Gagal menghapus")
+      Swal.fire('Error', err.message || "Gagal menghapus", 'error')
     } finally {
       setLoading(false)
     }

@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { submitVote } from "./actions"
+import Swal from "sweetalert2"
 
 type Item = {
   id: string
@@ -52,7 +53,19 @@ export default function VotingClientForm({
       return
     }
 
-    if (!confirm("Apakah Anda yakin dengan pilihan Anda? Suara yang telah masuk tidak dapat diubah kembali.")) {
+    const result = await Swal.fire({
+      title: 'Konfirmasi Pilihan',
+      text: "Apakah Anda yakin dengan pilihan Anda? Suara yang telah masuk tidak dapat diubah kembali.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#2563EB',
+      cancelButtonColor: '#EF4444',
+      confirmButtonText: 'Ya, Saya Yakin',
+      cancelButtonText: 'Batal',
+      reverseButtons: true
+    })
+
+    if (!result.isConfirmed) {
       return
     }
 
