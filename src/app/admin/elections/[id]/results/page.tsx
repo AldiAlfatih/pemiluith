@@ -71,16 +71,20 @@ export default async function ElectionResultsPage({ params }: { params: { id: st
     })
   }
 
-  // Format voter list (for attendance tracking)
+  // Format voter list — must serialize Date objects to strings for Client Component
   const voters = votes.map(vote => ({
     id: vote.id,
     userId: vote.user.id,
     name: vote.user.name,
     nim: vote.user.nim,
     className: vote.user.className || "-",
-    votedAt: vote.createdAt,
-    // Add specific choices if needed later based on user feedback
-    details: vote.details
+    votedAt: vote.createdAt.toISOString(),
+    details: vote.details.map(d => ({
+      id: d.id,
+      voteId: d.voteId,
+      optionId: d.optionId ?? null,
+      candidateId: d.candidateId ?? null,
+    }))
   }))
 
   return (
