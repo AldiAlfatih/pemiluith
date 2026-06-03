@@ -68,32 +68,26 @@ export default function ElectionActionButtons({ electionId, isActive }: { electi
   return (
     <>
       <Link 
-        href={`/admin/elections/${electionId}/results`}
-        className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 px-4 py-2 rounded-xl text-sm font-bold transition-colors"
-      >
-        <BarChart3 size={16} /> Hasil
-      </Link>
-      <Link 
         href={`/admin/elections/${electionId}/edit`}
-        className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-4 py-2 rounded-xl text-sm font-bold transition-colors"
+        className="flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-3 py-2 rounded-xl text-xs font-bold transition-colors"
       >
-        <Edit size={16} /> Edit
+        <Edit size={14} /> Edit
       </Link>
       {isActive && (
         <button 
           onClick={handleCancel}
           disabled={loading}
-          className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-4 py-2 rounded-xl text-sm font-bold transition-colors disabled:opacity-50"
+          className="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-3 py-2 rounded-xl text-xs font-bold transition-colors disabled:opacity-50"
         >
-          <Ban size={16} /> Batalkan
+          <Ban size={14} /> Tutup
         </button>
       )}
       <button 
         onClick={handleDelete}
         disabled={loading}
-        className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2 rounded-xl text-sm font-bold transition-colors disabled:opacity-50"
+        className="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-2 rounded-xl text-xs font-bold transition-colors disabled:opacity-50"
       >
-        <Trash2 size={16} /> Hapus
+        <Trash2 size={14} /> Hapus
       </button>
     </>
   )
