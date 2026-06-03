@@ -3,11 +3,13 @@
 import { useState } from "react"
 import { addOption, updateOption, toggleOptionStatus, deleteOption } from "../../actions"
 import { PlusCircle, Save, X, Edit, Eye, EyeOff, Trash2 } from "lucide-react"
+import ConfirmModal from "@/components/ConfirmModal"
 
 export default function ManageOptionsClient({ electionId, options }: { electionId: string, options: any[] }) {
   const [isAdding, setIsAdding] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null)
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -39,11 +41,12 @@ export default function ManageOptionsClient({ electionId, options }: { electionI
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Yakin ingin menghapus opsi ini?")) return
+  const executeDelete = async () => {
+    if (!itemToDelete) return
     try {
       setLoading(true)
-      await deleteOption(id, electionId)
+      await deleteOption(itemToDelete, electionId)
+      setItemToDelete(null)
     } catch (err: any) {
       alert("Gagal menghapus: " + err.message)
     } finally {
@@ -87,7 +90,7 @@ export default function ManageOptionsClient({ electionId, options }: { electionI
                   {o.isActive ? <><EyeOff size={14} /> Nonaktifkan</> : <><Eye size={14} /> Aktifkan</>}
                 </button>
                 <button 
-                  onClick={() => handleDelete(o.id)}
+                  onClick={() => setItemToDelete(o.id)}
                   disabled={loading}
                   className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded-lg text-xs font-semibold transition-colors disabled:opacity-50"
                 >
@@ -148,6 +151,15 @@ export default function ManageOptionsClient({ electionId, options }: { electionI
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={itemToDelete !== null}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={executeDelete}
+        title="Hapus Opsi"
+        message="Yakin ingin menghapus opsi ini? Tindakan ini tidak dapat dibatalkan."
+        loading={loading}
+      />
     </div>
   )
 }
