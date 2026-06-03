@@ -71,7 +71,33 @@ export default async function ElectionResultsPage({ params }: { params: { id: st
     })
   }
 
-  // Format voter list — must serialize Date objects to strings for Client Component
+  // Serialize election to strip all Prisma Date fields — required for Client Component
+  const serializedElection = {
+    id: election.id,
+    title: election.title,
+    type: election.type,
+    status: election.status,
+    candidates: election.candidates.map(c => ({
+      id: c.id,
+      name: c.name,
+      nim: c.nim,
+      programStudy: c.programStudy,
+      vision: c.vision ?? null,
+      mission: c.mission ?? null,
+      isActive: c.isActive,
+      orderNumber: c.orderNumber,
+    })),
+    options: election.options.map(o => ({
+      id: o.id,
+      name: o.name,
+      meaning: o.meaning ?? null,
+      philosophy: o.philosophy ?? null,
+      isActive: o.isActive,
+      orderNumber: o.orderNumber,
+    })),
+  }
+
+  // Serialize voter list — strip all Date objects before passing to Client Component
   const voters = votes.map(vote => ({
     id: vote.id,
     userId: vote.user.id,
@@ -145,7 +171,7 @@ export default async function ElectionResultsPage({ params }: { params: { id: st
 
       {/* Main Content Area via Client Component */}
       <ResultsClient 
-        election={election} 
+        election={serializedElection} 
         resultsData={resultsData} 
         voters={voters}
         totalVotes={election._count.votes}
