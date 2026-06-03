@@ -4,10 +4,12 @@ import Link from "next/link"
 import { ArrowLeft, Users, CheckCircle2, Vote } from "lucide-react"
 import ResultsClient from "./results-client"
 
-export default async function ElectionResultsPage({ params }: { params: { id: string } }) {
+export default async function ElectionResultsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+
   // Fetch election with candidates, options, and vote count
   const election = await prisma.election.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       options: { orderBy: { orderNumber: "asc" } },
       candidates: { orderBy: { orderNumber: "asc" } },
@@ -32,7 +34,7 @@ export default async function ElectionResultsPage({ params }: { params: { id: st
 
   // Fetch all votes with voter info and their choices
   const votes = await prisma.vote.findMany({
-    where: { electionId: election.id },
+    where: { electionId: id },
     include: {
       user: { select: { id: true, name: true, nim: true, className: true } },
       details: {
