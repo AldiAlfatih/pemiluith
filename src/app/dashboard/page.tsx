@@ -5,6 +5,7 @@ import { Calendar, CheckCircle, Clock, ChevronRight, Vote } from "lucide-react"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import DashboardSearch from "./DashboardSearch"
+import { Suspense } from "react"
 
 export default async function StudentDashboardPage({
   searchParams,
@@ -63,7 +64,9 @@ export default async function StudentDashboardPage({
             </div>
             Daftar Kegiatan Pemilihan
           </h2>
-          <DashboardSearch />
+          <Suspense fallback={<div className="h-10 w-64 bg-slate-100 rounded-xl animate-pulse" />}>
+            <DashboardSearch />
+          </Suspense>
         </div>
         
         {elections.length === 0 ? (
