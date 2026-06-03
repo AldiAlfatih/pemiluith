@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Users, Upload, Plus, Pencil, UserCheck, UserPlus } from "lucide-react"
 import StudentActions from "./StudentActions"
 import StudentFilters from "./StudentFilters"
+import { Suspense } from "react"
 
 export default async function StudentsPage({
   searchParams,
@@ -26,7 +27,6 @@ export default async function StudentsPage({
     whereClause.isActive = false
   }
 
-  // Handle Sorting
   let orderByClause: any = { nim: "asc" }
   if (sort === "nim_desc") orderByClause = { nim: "desc" }
   else if (sort === "name_asc") orderByClause = { name: "asc" }
@@ -34,42 +34,38 @@ export default async function StudentsPage({
   else if (sort === "newest") orderByClause = { createdAt: "desc" }
 
   const [students, totalStudents, activeStudents, newStudents] = await Promise.all([
-    prisma.user.findMany({
-      where: whereClause,
-      orderBy: orderByClause
-    }),
+    prisma.user.findMany({ where: whereClause, orderBy: orderByClause }),
     prisma.user.count({ where: { role: "MAHASISWA" } }),
     prisma.user.count({ where: { role: "MAHASISWA", isActive: true } }),
-    prisma.user.count({ where: { role: "MAHASISWA", mustChangePassword: true } })
+    prisma.user.count({ where: { role: "MAHASISWA", mustChangePassword: true } }),
   ])
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Data Mahasiswa</h1>
           <p className="text-sm text-slate-500">Kelola pemilih yang terdaftar dalam sistem.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Link 
+          <Link
             href="/admin/students/create"
             className="flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-xl font-medium transition-colors shadow-sm text-sm"
           >
-            <Plus size={18} />
-            Tambah Manual
+            <Plus size={18} /> Tambah Manual
           </Link>
-          <Link 
+          <Link
             href="/admin/students/import"
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-colors shadow-sm text-sm"
           >
-            <Upload size={18} />
-            Import Excel
+            <Upload size={18} /> Import Excel
           </Link>
         </div>
       </div>
-      
+
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
             <Users size={24} />
@@ -98,9 +94,15 @@ export default async function StudentsPage({
           </div>
         </div>
       </div>
-      
-      <StudentFilters />
-      
+
+      {/* Filters — must be wrapped in Suspense because it uses useSearchParams() */}
+      <Suspense fallback={
+        <div className="h-16 bg-white rounded-2xl border border-slate-100 animate-pulse" />
+      }>
+        <StudentFilters />
+      </Suspense>
+
+      {/* Student Table */}
       <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -146,9 +148,9 @@ export default async function StudentsPage({
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                      {student.importSource === 'excel_upload' ? (
+                      {student.importSource === "excel_upload" ? (
                         <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-700">Excel</span>
-                      ) : student.importSource === 'csv_upload' ? (
+                      ) : student.importSource === "csv_upload" ? (
                         <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-indigo-50 text-indigo-700">CSV</span>
                       ) : (
                         <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">Manual</span>
@@ -156,7 +158,7 @@ export default async function StudentsPage({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Link 
+                        <Link
                           href={`/admin/students/${student.id}/edit`}
                           className="p-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
                           title="Edit Data"
