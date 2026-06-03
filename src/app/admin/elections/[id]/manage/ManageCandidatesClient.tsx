@@ -86,8 +86,6 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
         </div>
       )}
 
-      )}
-
       <button 
         onClick={() => setIsAdding(true)}
         className="flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-blue-200 text-blue-600 font-bold rounded-2xl hover:bg-blue-50 transition-colors"
@@ -146,6 +144,7 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
             </form>
           </div>
         </div>
+      )}
     </div>
   )
 }

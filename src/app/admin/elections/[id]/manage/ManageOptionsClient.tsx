@@ -128,6 +128,7 @@ export default function ManageOptionsClient({ electionId, options }: { electionI
             </form>
           </div>
         </div>
+      )}
     </div>
   )
 }
