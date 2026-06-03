@@ -222,3 +222,37 @@ export async function toggleCandidateStatus(id: string, electionId: string, isAc
   revalidatePath(`/admin/elections/${electionId}/manage`)
   return { success: true }
 }
+
+export async function deleteOption(id: string, electionId: string) {
+  const session = await auth()
+  if (!session || session.user.role !== "ADMIN") throw new Error("Unauthorized")
+
+  try {
+    await prisma.electionOption.delete({ where: { id } })
+  } catch (error: any) {
+    if (error.code === 'P2003') {
+      throw new Error("Tidak dapat menghapus opsi ini karena sudah ada suara yang masuk. Silakan gunakan fitur Nonaktifkan.")
+    }
+    throw error
+  }
+
+  revalidatePath(`/admin/elections/${electionId}/manage`)
+  return { success: true }
+}
+
+export async function deleteCandidate(id: string, electionId: string) {
+  const session = await auth()
+  if (!session || session.user.role !== "ADMIN") throw new Error("Unauthorized")
+
+  try {
+    await prisma.candidate.delete({ where: { id } })
+  } catch (error: any) {
+    if (error.code === 'P2003') {
+      throw new Error("Tidak dapat menghapus kandidat ini karena sudah ada suara yang masuk. Silakan gunakan fitur Nonaktifkan.")
+    }
+    throw error
+  }
+
+  revalidatePath(`/admin/elections/${electionId}/manage`)
+  return { success: true }
+}

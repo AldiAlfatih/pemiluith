@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { addCandidate, updateCandidate, toggleCandidateStatus } from "../../actions"
-import { UserPlus, Save, X, Edit, Eye, EyeOff } from "lucide-react"
+import { addCandidate, updateCandidate, toggleCandidateStatus, deleteCandidate } from "../../actions"
+import { UserPlus, Save, X, Edit, Eye, EyeOff, Trash2 } from "lucide-react"
 
 export default function ManageCandidatesClient({ electionId, candidates }: { electionId: string, candidates: any[] }) {
   const [isAdding, setIsAdding] = useState(false)
@@ -39,6 +39,18 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
     }
   }
 
+  const handleDelete = async (id: string) => {
+    if (!confirm("Yakin ingin menghapus kandidat ini?")) return
+    try {
+      setLoading(true)
+      await deleteCandidate(id, electionId)
+    } catch (err: any) {
+      alert("Gagal menghapus: " + err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       {candidates.length === 0 ? (
@@ -69,16 +81,23 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
                 <button 
                   onClick={() => setEditingId(c.id)}
                   disabled={loading}
-                  className="flex-1 flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 rounded-lg text-xs font-semibold transition-colors disabled:opacity-50"
                 >
-                  <Edit size={16} /> Edit
+                  <Edit size={14} /> Edit
                 </button>
                 <button 
                   onClick={() => handleToggleStatus(c.id, c.isActive)}
                   disabled={loading}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 ${c.isActive ? 'bg-red-50 hover:bg-red-100 text-red-600' : 'bg-green-50 hover:bg-green-100 text-green-600'}`}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-colors disabled:opacity-50 ${c.isActive ? 'bg-amber-50 hover:bg-amber-100 text-amber-600' : 'bg-green-50 hover:bg-green-100 text-green-600'}`}
                 >
-                  {c.isActive ? <><EyeOff size={16} /> Nonaktifkan</> : <><Eye size={16} /> Aktifkan</>}
+                  {c.isActive ? <><EyeOff size={14} /> Nonaktifkan</> : <><Eye size={14} /> Aktifkan</>}
+                </button>
+                <button 
+                  onClick={() => handleDelete(c.id)}
+                  disabled={loading}
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded-lg text-xs font-semibold transition-colors disabled:opacity-50"
+                >
+                  <Trash2 size={14} /> Hapus
                 </button>
               </div>
             </div>

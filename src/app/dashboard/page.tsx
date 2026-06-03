@@ -31,6 +31,9 @@ export default async function StudentDashboardPage({
     include: {
       votes: {
         where: { userId }
+      },
+      _count: {
+        select: { votes: true }
       }
     }
   })
@@ -55,8 +58,8 @@ export default async function StudentDashboardPage({
       <div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-50/80 p-1.5 rounded-lg border border-blue-100">
-              <img src="/check-icon.png" alt="Icon" className="w-full h-full object-contain" />
+            <div className="w-10 h-10 bg-blue-50/80 p-1.5 rounded-lg border border-blue-100 flex justify-center items-center">
+              <Vote size={24} className="text-blue-600" />
             </div>
             Daftar Kegiatan Pemilihan
           </h2>
@@ -79,6 +82,7 @@ export default async function StudentDashboardPage({
               const isUpcoming = now < election.startAt
               const isClosed = now > election.endAt || election.status === "CLOSED"
               const isActive = !isUpcoming && !isClosed && election.status === "ACTIVE"
+              const totalVotes = election._count.votes
 
               return (
                 <div 
@@ -96,12 +100,12 @@ export default async function StudentDashboardPage({
                         "bg-slate-50 text-slate-600 border-slate-200"
                       }`}>
                         {isActive ? (
-                          <span className="flex items-center gap-1.5"><img src="/green-circle.png" alt="Active" className="w-3 h-3" /> SEDANG BERLANGSUNG</span>
+                          <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" /> SEDANG BERLANGSUNG</span>
                         ) : isUpcoming ? "⏳ AKAN DATANG" : "⚫ SELESAI"}
                       </span>
                       {hasVoted && (
                         <span className="flex items-center gap-1.5 text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap">
-                          <img src="/check-icon.png" alt="Voted" className="w-3.5 h-3.5" /> SUDAH MEMILIH
+                          <CheckCircle size={14} /> SUDAH MEMILIH
                         </span>
                       )}
                     </div>
@@ -110,14 +114,18 @@ export default async function StudentDashboardPage({
                   </div>
                   
                   <div className="p-6 bg-slate-50/50 flex-1 flex flex-col justify-end">
-                    <div className="bg-white p-3 rounded-xl border border-slate-100 mb-5 space-y-2 text-xs font-medium text-slate-600 shadow-sm">
-                      <div className="flex justify-between items-center">
+                    <div className="bg-white p-3 rounded-xl border border-slate-100 mb-5 space-y-3 shadow-sm">
+                      <div className="flex justify-between items-center text-xs font-medium">
                         <span className="text-slate-400">Mulai</span>
                         <span className="text-slate-800">{format(election.startAt, "dd MMM yyyy, HH:mm", { locale: id })}</span>
                       </div>
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between items-center text-xs font-medium border-t border-slate-50 pt-2">
                         <span className="text-slate-400">Selesai</span>
                         <span className="text-slate-800">{format(election.endAt, "dd MMM yyyy, HH:mm", { locale: id })}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs font-medium border-t border-slate-50 pt-2">
+                        <span className="text-slate-400">Total Suara</span>
+                        <span className="text-blue-700 font-bold px-2 py-1 bg-blue-50 rounded-lg">{totalVotes} Masuk</span>
                       </div>
                     </div>
                     
