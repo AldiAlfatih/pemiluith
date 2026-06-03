@@ -156,3 +156,69 @@ export async function addOption(electionId: string, formData: FormData) {
   revalidatePath(`/admin/elections/${electionId}/manage`)
   return { success: true }
 }
+
+export async function updateOption(id: string, electionId: string, formData: FormData) {
+  const session = await auth()
+  if (!session || session.user.role !== "ADMIN") throw new Error("Unauthorized")
+
+  const name = formData.get("name") as string
+  const philosophy = formData.get("philosophy") as string
+  const meaning = formData.get("meaning") as string
+
+  if (!name) throw new Error("Nama Opsi wajib diisi")
+
+  await prisma.electionOption.update({
+    where: { id },
+    data: { name, philosophy, meaning }
+  })
+
+  revalidatePath(`/admin/elections/${electionId}/manage`)
+  return { success: true }
+}
+
+export async function toggleOptionStatus(id: string, electionId: string, isActive: boolean) {
+  const session = await auth()
+  if (!session || session.user.role !== "ADMIN") throw new Error("Unauthorized")
+
+  await prisma.electionOption.update({
+    where: { id },
+    data: { isActive }
+  })
+
+  revalidatePath(`/admin/elections/${electionId}/manage`)
+  return { success: true }
+}
+
+export async function updateCandidate(id: string, electionId: string, formData: FormData) {
+  const session = await auth()
+  if (!session || session.user.role !== "ADMIN") throw new Error("Unauthorized")
+
+  const name = formData.get("name") as string
+  const nim = formData.get("nim") as string
+  const programStudy = formData.get("programStudy") as string
+  const vision = formData.get("vision") as string
+  const mission = formData.get("mission") as string
+
+  if (!name || !nim || !programStudy) throw new Error("Nama, NIM, dan Prodi wajib diisi")
+
+  await prisma.candidate.update({
+    where: { id },
+    data: { name, nim, programStudy, vision, mission }
+  })
+
+  revalidatePath(`/admin/elections/${electionId}/manage`)
+  return { success: true }
+}
+
+export async function toggleCandidateStatus(id: string, electionId: string, isActive: boolean) {
+  const session = await auth()
+  if (!session || session.user.role !== "ADMIN") throw new Error("Unauthorized")
+
+  await prisma.candidate.update({
+    where: { id },
+    data: { isActive }
+  })
+
+  revalidatePath(`/admin/elections/${electionId}/manage`)
+  return { success: true }
+}
