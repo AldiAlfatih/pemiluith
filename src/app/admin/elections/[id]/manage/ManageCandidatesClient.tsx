@@ -86,40 +86,66 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
         </div>
       )}
 
-      {!isAdding && !editingId ? (
-        <button 
-          onClick={() => setIsAdding(true)}
-          className="flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-blue-200 text-blue-600 font-bold rounded-2xl hover:bg-blue-50 transition-colors"
-        >
-          <UserPlus size={18} /> Tambah Kandidat Baru
-        </button>
-      ) : (
-        <form onSubmit={handleSubmit} className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-bold text-slate-800">{editingId ? 'Edit Kandidat' : 'Form Tambah Kandidat'}</h3>
-            <button type="button" onClick={() => { setIsAdding(false); setEditingId(null); }} className="p-1 hover:bg-slate-200 rounded-md"><X size={18}/></button>
-          </div>
-          
-          {(() => {
-            const editData = editingId ? candidates.find(c => c.id === editingId) : null;
-            return (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input type="text" name="name" required placeholder="Nama Lengkap *" defaultValue={editData?.name || ""} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none" />
-                  <input type="text" name="nim" required placeholder="NIM *" defaultValue={editData?.nim || ""} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none" />
-                </div>
-                <input type="text" name="programStudy" required placeholder="Program Studi *" defaultValue={editData?.programStudy || ""} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none" />
-                <textarea name="vision" rows={2} placeholder="Visi (Opsional)" defaultValue={editData?.vision || ""} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"></textarea>
-                <textarea name="mission" rows={2} placeholder="Misi (Opsional)" defaultValue={editData?.mission || ""} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"></textarea>
-              </>
-            )
-          })()}
-          
-          <button type="submit" disabled={loading} className="w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl disabled:opacity-50">
-            <Save size={18} /> {loading ? "Menyimpan..." : "Simpan Kandidat"}
-          </button>
-        </form>
       )}
+
+      <button 
+        onClick={() => setIsAdding(true)}
+        className="flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-blue-200 text-blue-600 font-bold rounded-2xl hover:bg-blue-50 transition-colors"
+      >
+        <UserPlus size={18} /> Tambah Kandidat Baru
+      </button>
+
+      {/* Modal / Popup Form */}
+      {(isAdding || editingId) && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-5">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="font-bold text-xl text-slate-800">{editingId ? 'Edit Kandidat' : 'Tambah Kandidat Baru'}</h3>
+                <button type="button" onClick={() => { setIsAdding(false); setEditingId(null); }} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-full transition-colors"><X size={20}/></button>
+              </div>
+              
+              {(() => {
+                const editData = editingId ? candidates.find(c => c.id === editingId) : null;
+                return (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">Nama Lengkap <span className="text-red-500">*</span></label>
+                        <input type="text" name="name" required placeholder="Nama lengkap kandidat" defaultValue={editData?.name || ""} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">NIM <span className="text-red-500">*</span></label>
+                        <input type="text" name="nim" required placeholder="NIM kandidat" defaultValue={editData?.nim || ""} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Program Studi <span className="text-red-500">*</span></label>
+                      <input type="text" name="programStudy" required placeholder="Contoh: Ilmu Komputer" defaultValue={editData?.programStudy || ""} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Visi <span className="text-slate-400 font-normal">(Opsional)</span></label>
+                      <textarea name="vision" rows={2} placeholder="Tuliskan visi kandidat..." defaultValue={editData?.vision || ""} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none"></textarea>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Misi <span className="text-slate-400 font-normal">(Opsional)</span></label>
+                      <textarea name="mission" rows={2} placeholder="Tuliskan misi kandidat..." defaultValue={editData?.mission || ""} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none"></textarea>
+                    </div>
+                  </div>
+                )
+              })()}
+              
+              <div className="pt-4 border-t border-slate-100 flex gap-3">
+                <button type="button" onClick={() => { setIsAdding(false); setEditingId(null); }} className="flex-1 py-3 text-slate-600 font-semibold hover:bg-slate-50 rounded-xl transition-colors">
+                  Batal
+                </button>
+                <button type="submit" disabled={loading} className="flex-1 flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl disabled:opacity-50 transition-colors shadow-sm hover:shadow">
+                  <Save size={18} /> {loading ? "Menyimpan..." : "Simpan"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
     </div>
   )
 }
