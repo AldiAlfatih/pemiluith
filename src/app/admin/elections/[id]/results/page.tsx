@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, Users, CheckCircle2, Vote } from "lucide-react"
-import ResultsClient from "./ResultsClient"
+import ResultsClient from "./results-client"
 
 export default async function ElectionResultsPage({ params }: { params: { id: string } }) {
   const election = await prisma.election.findUnique({
