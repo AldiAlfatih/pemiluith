@@ -17,6 +17,10 @@ type Item = {
   description?: string | null
   photoUrl?: string | null
   orderNumber?: number
+  reason?: string | null
+  mainValue?: string | null
+  languageReference?: string | null
+  proposer?: string | null
 }
 
 export default function VotingClientForm({ 
@@ -139,21 +143,48 @@ export default function VotingClientForm({
                   </>
                 ) : (
                   <>
-                    <h3 className="text-xl font-bold text-gray-900 leading-tight">{item.name}</h3>
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-xl font-bold text-gray-900 leading-tight">{item.name}</h3>
+                      {item.languageReference && (
+                        <span className="text-xs font-medium bg-indigo-50 text-indigo-700 px-2 py-1 rounded-md border border-indigo-100">
+                          {item.languageReference}
+                        </span>
+                      )}
+                    </div>
                     
-                    {item.philosophy && (
-                      <div className="mt-4">
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Filosofi</span>
-                        <p className="text-sm text-gray-700 mt-1 leading-relaxed">"{item.philosophy}"</p>
-                      </div>
+                    {item.proposer && (
+                      <p className="text-sm text-gray-500 mt-1 mb-3">Diusulkan oleh: <span className="font-medium text-gray-700">{item.proposer}</span></p>
                     )}
-                    
-                    {item.meaning && (
-                      <div className="mt-4 pt-4 border-t border-gray-100">
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Makna</span>
-                        <p className="text-sm text-gray-700 mt-1 leading-relaxed">{item.meaning}</p>
-                      </div>
-                    )}
+
+                    <div className="space-y-4 mt-4">
+                      {item.philosophy && (
+                        <div>
+                          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Filosofi</span>
+                          <p className="text-sm text-gray-700 leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-100">"{item.philosophy}"</p>
+                        </div>
+                      )}
+                      
+                      {item.meaning && (
+                        <div>
+                          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Makna</span>
+                          <p className="text-sm text-gray-700 leading-relaxed">{item.meaning}</p>
+                        </div>
+                      )}
+
+                      {item.mainValue && (
+                        <div>
+                          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Nilai Utama</span>
+                          <p className="text-sm text-gray-700 leading-relaxed">{item.mainValue}</p>
+                        </div>
+                      )}
+
+                      {item.reason && (
+                        <div>
+                          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Alasan Pengusulan</span>
+                          <p className="text-sm text-gray-700 leading-relaxed italic text-gray-600">{item.reason}</p>
+                        </div>
+                      )}
+                    </div>
                   </>
                 )}
               </div>

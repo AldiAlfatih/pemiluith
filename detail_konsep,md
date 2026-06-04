@@ -1,0 +1,755 @@
+Berikut **detail konsep final** untuk sistem voting Angkatan 1 Mahasiswa ITH.
+
+# Konsep Sistem
+
+Nama sistem yang cocok:
+
+**E-Voting Angkatan 1 ITH**
+
+Sistem ini adalah platform voting berbasis web yang digunakan oleh mahasiswa Angkatan 1 ITH untuk melakukan pemilihan secara digital, seperti voting nama angkatan, voting ketua angkatan, logo angkatan, jaket angkatan, atau keputusan internal lainnya.
+
+Sistem ini menggunakan **NIM sebagai username**, dengan **password awal berupa NIM**. Setelah login pertama, mahasiswa wajib mengganti password. Email digunakan sebagai cadangan untuk reset password jika mahasiswa lupa password.
+
+---
+
+# Tujuan Sistem
+
+Tujuan utama sistem ini adalah:
+
+| Tujuan                             | Penjelasan                                                         |
+| ---------------------------------- | ------------------------------------------------------------------ |
+| Mempermudah voting                 | Mahasiswa bisa voting secara online tanpa kertas/manual            |
+| Menjamin satu mahasiswa satu suara | Setiap NIM hanya bisa voting sesuai aturan yang ditentukan         |
+| Membuat voting lebih transparan    | Admin bisa memantau jumlah partisipasi dan hasil akhir             |
+| Bisa digunakan berulang            | Tidak hanya untuk nama angkatan, tapi juga ketua, logo, jaket, dll |
+| Mengurangi manipulasi suara        | Sistem mencatat data voting dan aktivitas penting                  |
+| Membuat proses lebih rapi          | Semua data kandidat, pilihan, dan hasil tersimpan di dashboard     |
+
+---
+
+# Role Pengguna
+
+Sistem ini memiliki 2 role utama:
+
+| Role      | Fungsi                                                                                                                     |
+| --------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Mahasiswa | Login, melihat voting aktif, melihat detail pilihan, melakukan voting, melihat hasil jika sudah dibuka                     |
+| Admin     | Mengelola mahasiswa, membuat voting, menambah pilihan/kandidat, mengatur aturan voting, memantau proses, dan melihat hasil |
+
+---
+
+# Landing Page
+
+Sistem ini sebaiknya punya **landing page sebelum login**.
+
+Landing page tidak perlu terlalu kompleks. Fungsinya untuk memberi kesan resmi dan menjelaskan sistem secara singkat.
+
+Isi landing page:
+
+| Bagian            | Isi                                                    |
+| ----------------- | ------------------------------------------------------ |
+| Nama sistem       | E-Voting Angkatan 1 ITH                                |
+| Deskripsi singkat | Platform voting digital untuk mahasiswa Angkatan 1 ITH |
+| Status voting     | Menampilkan voting yang sedang aktif                   |
+| Informasi         | Setiap mahasiswa hanya dapat voting sesuai aturan      |
+| Tombol login      | Masuk dengan NIM                                       |
+
+Contoh teks landing page:
+
+> Selamat datang di E-Voting Angkatan 1 ITH. Sistem ini digunakan untuk mendukung proses pemilihan nama angkatan, ketua angkatan, dan keputusan bersama mahasiswa Angkatan 1 ITH secara digital, aman, dan transparan.
+
+---
+
+# Alur Login Mahasiswa
+
+Alur login mahasiswa:
+
+```text
+Mahasiswa membuka website
+↓
+Klik tombol Login
+↓
+Masukkan NIM dan password
+↓
+Jika pertama kali login, password masih sama dengan NIM
+↓
+Sistem mewajibkan mahasiswa mengganti password
+↓
+Mahasiswa masuk ke dashboard
+↓
+Mahasiswa bisa mengikuti voting aktif
+```
+
+Data login:
+
+| Field         | Keterangan                    |
+| ------------- | ----------------------------- |
+| Username      | NIM mahasiswa                 |
+| Password awal | NIM mahasiswa                 |
+| Password baru | Dibuat sendiri oleh mahasiswa |
+| Email         | Untuk reset password          |
+
+Fitur tambahan:
+
+| Fitur         | Fungsi                              |
+| ------------- | ----------------------------------- |
+| Lupa password | Reset password melalui email        |
+| Ubah password | Mahasiswa bisa mengganti password   |
+| Validasi akun | Hanya NIM terdaftar yang bisa login |
+| Status akun   | Aktif/nonaktif                      |
+
+---
+
+# Dashboard Mahasiswa
+
+Setelah login, mahasiswa masuk ke dashboard.
+
+Isi dashboard mahasiswa:
+
+| Fitur               | Penjelasan                                           |
+| ------------------- | ---------------------------------------------------- |
+| Daftar voting aktif | Menampilkan voting yang sedang berjalan              |
+| Voting belum dibuka | Menampilkan voting yang masih menunggu jadwal        |
+| Voting selesai      | Menampilkan voting yang sudah ditutup                |
+| Status voting       | Menampilkan apakah mahasiswa sudah voting atau belum |
+| Profil akun         | Menampilkan NIM, nama, email, prodi, kelas           |
+| Ubah password       | Untuk mengganti password akun                        |
+| Riwayat voting      | Menampilkan voting yang pernah diikuti               |
+
+Contoh tampilan data:
+
+| Voting                       | Status       | Aksi           |
+| ---------------------------- | ------------ | -------------- |
+| Voting Nama Angkatan Tahap 1 | Aktif        | Pilih Sekarang |
+| Voting Ketua Angkatan        | Belum Dibuka | Menunggu       |
+| Voting Nama Angkatan Final   | Selesai      | Lihat Hasil    |
+
+---
+
+# Konsep Voting Nama Angkatan
+
+Untuk voting nama angkatan, saya sarankan menggunakan sistem **2 tahap**.
+
+## Tahap 1: Penyaringan Ide Nama
+
+Misalnya ada 30 ide nama angkatan.
+
+Admin bisa mengatur:
+
+| Pengaturan              | Isi                                |
+| ----------------------- | ---------------------------------- |
+| Jenis voting            | Multiple choice                    |
+| Jumlah pilihan maksimal | 3 pilihan                          |
+| Tujuan voting           | Menentukan 5 nama teratas          |
+| Hasil sementara         | Tidak ditampilkan ke mahasiswa     |
+| Hasil akhir             | Ditampilkan setelah voting selesai |
+
+Alurnya:
+
+```text
+Admin input 30 ide nama angkatan
+↓
+Mahasiswa login
+↓
+Mahasiswa melihat daftar nama
+↓
+Mahasiswa membaca detail nama, arti, dan filosofi
+↓
+Mahasiswa memilih maksimal 3 nama
+↓
+Sistem menyimpan suara
+↓
+Voting ditutup
+↓
+Sistem mengambil 5 nama dengan suara tertinggi
+```
+
+## Tahap 2: Voting Final
+
+Setelah 5 nama teratas didapatkan, dilakukan voting final.
+
+Admin membuat voting baru:
+
+| Pengaturan              | Isi                                |
+| ----------------------- | ---------------------------------- |
+| Jenis voting            | Single choice                      |
+| Jumlah pilihan maksimal | 1 pilihan                          |
+| Jumlah kandidat nama    | 5 nama teratas                     |
+| Tujuan voting           | Menentukan 1 nama resmi            |
+| Hasil akhir             | Ditampilkan setelah voting selesai |
+
+Alurnya:
+
+```text
+Admin membuat voting final dari 5 nama teratas
+↓
+Mahasiswa memilih 1 nama terbaik
+↓
+Voting ditutup
+↓
+Nama dengan suara tertinggi menjadi nama angkatan resmi
+```
+
+Menurut saya, model 2 tahap lebih baik daripada langsung memilih 1 dari 30 nama, karena kalau langsung dari 30 nama, suara bisa terlalu tersebar. Dengan 2 tahap, hasil akhirnya lebih kuat dan lebih mewakili pilihan mayoritas mahasiswa.
+
+---
+
+# Fitur Detail Nama Angkatan
+
+Setiap nama angkatan tidak hanya ditampilkan sebagai nama saja. Mahasiswa bisa klik untuk melihat detailnya.
+
+Data yang perlu ditampilkan:
+
+| Bagian            | Isi                                                          |
+| ----------------- | ------------------------------------------------------------ |
+| Nama angkatan     | Nama yang diusulkan                                          |
+| Arti nama         | Makna dasar nama tersebut                                    |
+| Filosofi          | Makna mendalam dari nama tersebut                            |
+| Alasan pengusulan | Kenapa nama itu cocok untuk Angkatan 1 ITH                   |
+| Nilai utama       | Contoh: pionir, solidaritas, kepemimpinan, kebanggaan        |
+| Referensi bahasa  | Misalnya Indonesia, Sanskerta, Bugis, Makassar, atau lainnya |
+| Pengusul          | Opsional, bisa ditampilkan atau disembunyikan                |
+| Gambar/ikon       | Opsional, untuk mempercantik tampilan                        |
+
+Contoh detail nama:
+
+```text
+Nama Angkatan: Pionir ITH
+
+Arti:
+Pionir berarti pelopor atau pembuka jalan.
+
+Filosofi:
+Nama ini menggambarkan Angkatan 1 ITH sebagai generasi pertama yang membuka sejarah, membangun budaya akademik, dan menjadi fondasi bagi angkatan-angkatan berikutnya.
+
+Alasan:
+Nama ini cocok karena Angkatan 1 memiliki peran penting sebagai angkatan awal yang membawa identitas, semangat, dan arah kebersamaan mahasiswa ITH.
+
+Nilai Utama:
+Kepemimpinan, keberanian, kebersamaan, dan sejarah.
+```
+
+---
+
+# Konsep Voting Ketua Angkatan
+
+Untuk voting ketua angkatan, sistemnya berbeda dari voting nama.
+
+Mahasiswa hanya memilih **1 kandidat**.
+
+Data kandidat yang ditampilkan:
+
+| Data              | Keterangan                  |
+| ----------------- | --------------------------- |
+| Foto kandidat     | Foto calon ketua            |
+| Nama              | Nama kandidat               |
+| NIM               | Nomor induk mahasiswa       |
+| Program studi     | Prodi kandidat              |
+| Nomor urut        | Nomor kandidat              |
+| Visi              | Tujuan utama kandidat       |
+| Misi              | Langkah yang akan dilakukan |
+| Deskripsi singkat | Profil singkat kandidat     |
+
+Alur voting ketua:
+
+```text
+Admin input data kandidat
+↓
+Admin membuka voting ketua angkatan
+↓
+Mahasiswa login
+↓
+Mahasiswa melihat profil kandidat
+↓
+Mahasiswa memilih 1 kandidat
+↓
+Mahasiswa konfirmasi pilihan
+↓
+Suara tersimpan
+↓
+Hasil ditampilkan setelah voting ditutup
+```
+
+Untuk voting ketua, sebaiknya **hasil sementara tidak ditampilkan ke mahasiswa** agar tidak memengaruhi pilihan.
+
+---
+
+# Fitur Manajemen Voting untuk Admin
+
+Admin dapat membuat dan mengatur voting secara fleksibel.
+
+Field yang dibutuhkan:
+
+| Field                           | Fungsi                                              |
+| ------------------------------- | --------------------------------------------------- |
+| Judul voting                    | Nama voting                                         |
+| Deskripsi voting                | Penjelasan voting                                   |
+| Jenis voting                    | Nama angkatan, ketua angkatan, logo, jaket, polling |
+| Metode voting                   | Single choice atau multiple choice                  |
+| Minimal pilihan                 | Misalnya minimal 1                                  |
+| Maksimal pilihan                | Misalnya maksimal 3                                 |
+| Tanggal mulai                   | Jadwal voting dibuka                                |
+| Tanggal selesai                 | Jadwal voting ditutup                               |
+| Status voting                   | Draft, aktif, selesai                               |
+| Tampilkan hasil sementara       | Ya/tidak                                            |
+| Tampilkan hasil setelah selesai | Ya/tidak                                            |
+| Mode tahap                      | Penyaringan atau final                              |
+
+Contoh pengaturan voting:
+
+```text
+Judul: Voting Nama Angkatan Tahap 1
+Metode: Multiple Choice
+Maksimal Pilihan: 3
+Tujuan: Mengambil 5 besar
+Status: Aktif
+```
+
+```text
+Judul: Voting Nama Angkatan Final
+Metode: Single Choice
+Maksimal Pilihan: 1
+Tujuan: Menentukan nama resmi angkatan
+Status: Aktif
+```
+
+---
+
+# Dashboard Admin
+
+Dashboard admin adalah pusat kendali sistem.
+
+Isi dashboard admin:
+
+| Fitur                  | Penjelasan                                   |
+| ---------------------- | -------------------------------------------- |
+| Total mahasiswa        | Jumlah mahasiswa terdaftar                   |
+| Total sudah voting     | Jumlah mahasiswa yang sudah memberikan suara |
+| Total belum voting     | Jumlah mahasiswa yang belum voting           |
+| Persentase partisipasi | Persentase mahasiswa yang ikut voting        |
+| Voting aktif           | Daftar voting yang sedang berjalan           |
+| Voting selesai         | Daftar voting yang sudah ditutup             |
+| Grafik voting          | Visualisasi jumlah partisipasi               |
+| Hasil voting           | Rekap suara setelah voting selesai           |
+
+Contoh ringkasan:
+
+| Data            | Jumlah |
+| --------------- | -----: |
+| Total Mahasiswa |    120 |
+| Sudah Voting    |     96 |
+| Belum Voting    |     24 |
+| Partisipasi     |    80% |
+
+---
+
+# Manajemen Mahasiswa
+
+Admin bisa mengelola data mahasiswa.
+
+Fitur yang dibutuhkan:
+
+| Fitur            | Fungsi                                    |
+| ---------------- | ----------------------------------------- |
+| Tambah mahasiswa | Input data mahasiswa satu per satu        |
+| Import Excel/CSV | Input banyak mahasiswa sekaligus          |
+| Edit mahasiswa   | Mengubah nama, email, prodi, kelas        |
+| Nonaktifkan akun | Menonaktifkan mahasiswa tertentu          |
+| Reset password   | Mengatur ulang password mahasiswa         |
+| Filter mahasiswa | Berdasarkan prodi, kelas, status voting   |
+| Cek status akun  | Melihat siapa yang sudah login atau belum |
+
+Data mahasiswa:
+
+| Field           | Keterangan            |
+| --------------- | --------------------- |
+| NIM             | Username login        |
+| Nama            | Nama mahasiswa        |
+| Email           | Untuk reset password  |
+| Prodi           | Program studi         |
+| Kelas           | Opsional              |
+| Role            | Mahasiswa/admin       |
+| Status akun     | Aktif/nonaktif        |
+| Status password | Default/sudah diganti |
+
+---
+
+# Manajemen Pilihan/Kandidat
+
+Admin bisa mengelola pilihan sesuai jenis voting.
+
+Untuk voting nama angkatan:
+
+| Field            | Keterangan              |
+| ---------------- | ----------------------- |
+| Nama angkatan    | Nama yang akan divoting |
+| Arti             | Makna dasar nama        |
+| Filosofi         | Makna mendalam          |
+| Alasan           | Kenapa nama itu cocok   |
+| Nilai utama      | Nilai yang dibawa       |
+| Referensi bahasa | Asal bahasa nama        |
+| Pengusul         | Opsional                |
+| Gambar/ikon      | Opsional                |
+
+Untuk voting ketua angkatan:
+
+| Field         | Keterangan              |
+| ------------- | ----------------------- |
+| Nama kandidat | Nama calon ketua        |
+| NIM           | NIM kandidat            |
+| Prodi         | Program studi kandidat  |
+| Foto          | Foto kandidat           |
+| Nomor urut    | Nomor kandidat          |
+| Visi          | Visi kandidat           |
+| Misi          | Misi kandidat           |
+| Deskripsi     | Profil singkat kandidat |
+
+---
+
+# Monitoring Voting
+
+Admin perlu bisa memantau proses voting secara real-time atau hampir real-time.
+
+Data monitoring:
+
+| Data                   | Keterangan                                       |
+| ---------------------- | ------------------------------------------------ |
+| Total pemilih          | Jumlah mahasiswa terdaftar                       |
+| Sudah voting           | Mahasiswa yang sudah memberikan suara            |
+| Belum voting           | Mahasiswa yang belum memberikan suara            |
+| Persentase partisipasi | Perbandingan sudah voting dengan total mahasiswa |
+| Waktu voting           | Jadwal mulai dan selesai                         |
+| Status voting          | Draft, aktif, selesai                            |
+| Daftar belum voting    | Untuk kebutuhan pengingat                        |
+
+Yang boleh ditampilkan saat voting berlangsung:
+
+| Data                      | Ditampilkan?           |
+| ------------------------- | ---------------------- |
+| Jumlah partisipasi        | Ya                     |
+| Persentase partisipasi    | Ya                     |
+| Daftar sudah/belum voting | Ya, untuk admin        |
+| Perolehan suara sementara | Sebaiknya tidak        |
+| Hasil akhir               | Setelah voting selesai |
+
+---
+
+# Hasil Voting
+
+Setelah voting selesai, admin dapat melihat hasil.
+
+Fitur hasil voting:
+
+| Fitur                  | Fungsi                              |
+| ---------------------- | ----------------------------------- |
+| Total suara            | Jumlah suara masuk                  |
+| Perolehan tiap pilihan | Jumlah suara setiap nama/kandidat   |
+| Persentase suara       | Persentase masing-masing pilihan    |
+| Pemenang               | Pilihan dengan suara tertinggi      |
+| Ranking                | Urutan hasil voting                 |
+| Export hasil           | PDF atau Excel                      |
+| Publikasi hasil        | Hasil bisa ditampilkan ke mahasiswa |
+
+Untuk voting nama tahap 1, hasilnya berupa ranking 5 besar.
+
+Untuk voting final, hasilnya berupa 1 pemenang.
+
+---
+
+# Aturan Jika Suara Seri
+
+Sistem juga perlu punya aturan jika terjadi suara seri.
+
+Contoh:
+
+```text
+Jika posisi 5 dan 6 memiliki jumlah suara yang sama pada voting tahap 1, maka keduanya masuk ke tahap final.
+```
+
+Aturan ini lebih adil daripada admin memilih manual.
+
+Untuk voting final, jika suara tertinggi seri, bisa dilakukan:
+
+```text
+Voting ulang khusus pilihan yang seri.
+```
+
+---
+
+# Fitur Keamanan
+
+Karena sistem ini berhubungan dengan voting, keamanan wajib diperhatikan.
+
+Fitur keamanan yang perlu ada:
+
+| Fitur                     | Fungsi                                                     |
+| ------------------------- | ---------------------------------------------------------- |
+| Password hash             | Password tidak disimpan dalam bentuk asli                  |
+| Wajib ganti password awal | Karena password awal sama dengan NIM                       |
+| Reset password via email  | Untuk mahasiswa yang lupa password                         |
+| Validasi satu suara       | Mahasiswa tidak bisa voting dua kali pada voting yang sama |
+| Batas maksimal pilihan    | Sistem mencegah mahasiswa memilih lebih dari batas         |
+| Audit log                 | Mencatat aktivitas penting                                 |
+| Role access               | Mahasiswa tidak bisa akses dashboard admin                 |
+| Voting lock               | Voting yang sudah selesai tidak bisa diubah                |
+| Privasi pilihan           | Admin sebaiknya tidak melihat pilihan per mahasiswa        |
+
+Konsep privasi yang disarankan:
+
+| Data                            | Admin Bisa Lihat? |
+| ------------------------------- | ----------------- |
+| Siapa yang sudah voting         | Bisa              |
+| Siapa yang belum voting         | Bisa              |
+| Pilihan masing-masing mahasiswa | Sebaiknya tidak   |
+| Total suara tiap pilihan        | Bisa              |
+| Hasil akhir                     | Bisa              |
+
+---
+
+# Backend dan Teknologi yang Disarankan
+
+Karena rencana deploy di Vercel, stack yang cocok:
+
+| Bagian        | Teknologi                           |
+| ------------- | ----------------------------------- |
+| Frontend      | Next.js                             |
+| Styling       | Tailwind CSS                        |
+| Deploy        | Vercel                              |
+| Backend       | Next.js API Routes / Server Actions |
+| Database      | Supabase PostgreSQL                 |
+| Auth          | Custom login NIM + password         |
+| Storage       | Supabase Storage                    |
+| Email reset   | Resend / SMTP                       |
+| Password hash | bcrypt / Argon2                     |
+| Export        | PDF / Excel                         |
+
+Rekomendasi paling cocok:
+
+```text
+Next.js + Vercel + Supabase PostgreSQL
+```
+
+Alasannya:
+
+1. Cocok untuk dashboard admin.
+2. Cocok untuk data voting yang relasional.
+3. Bisa gratis untuk tahap awal.
+4. Bisa menyimpan data mahasiswa, voting, kandidat, dan suara.
+5. Bisa dikembangkan lagi untuk fitur lain.
+
+---
+
+# Struktur Database Sederhana
+
+Minimal tabel yang dibutuhkan:
+
+```text
+users
+- id
+- nim
+- name
+- email
+- password_hash
+- role
+- program_study
+- class_name
+- must_change_password
+- is_active
+- created_at
+
+elections
+- id
+- title
+- description
+- type
+- method
+- min_choices
+- max_choices
+- start_at
+- end_at
+- status
+- show_live_result
+- show_result_after_closed
+- stage_type
+- created_at
+
+election_options
+- id
+- election_id
+- name
+- meaning
+- philosophy
+- reason
+- main_value
+- language_reference
+- proposer
+- image_url
+- order_number
+- created_at
+
+candidates
+- id
+- election_id
+- name
+- nim
+- program_study
+- photo_url
+- vision
+- mission
+- description
+- order_number
+- created_at
+
+votes
+- id
+- election_id
+- user_id
+- created_at
+
+vote_details
+- id
+- vote_id
+- option_id
+- candidate_id
+
+audit_logs
+- id
+- user_id
+- action
+- description
+- created_at
+
+password_reset_tokens
+- id
+- user_id
+- token
+- expired_at
+- used_at
+```
+
+Kenapa butuh `vote_details`?
+
+Karena sistem mendukung **multiple choice**. Misalnya satu mahasiswa memilih 3 nama, maka satu data utama masuk ke tabel `votes`, lalu 3 pilihan masuk ke `vote_details`.
+
+---
+
+# Alur Sistem Lengkap
+
+## Alur Mahasiswa
+
+```text
+Landing Page
+↓
+Login dengan NIM dan password
+↓
+Jika password masih default, wajib ganti password
+↓
+Masuk dashboard mahasiswa
+↓
+Melihat voting aktif
+↓
+Klik voting
+↓
+Melihat daftar pilihan/kandidat
+↓
+Klik detail nama/kandidat
+↓
+Memilih sesuai batas maksimal
+↓
+Konfirmasi pilihan
+↓
+Suara tersimpan
+↓
+Status berubah menjadi sudah voting
+```
+
+## Alur Admin
+
+```text
+Login admin
+↓
+Masuk dashboard admin
+↓
+Import data mahasiswa
+↓
+Buat voting baru
+↓
+Atur jenis voting dan jumlah maksimal pilihan
+↓
+Tambah pilihan nama/kandidat
+↓
+Atur jadwal voting
+↓
+Aktifkan voting
+↓
+Pantau partisipasi
+↓
+Tutup voting
+↓
+Lihat hasil
+↓
+Export laporan
+```
+
+---
+
+# Fitur MVP yang Harus Dibuat Dulu
+
+Untuk versi awal, buat fitur inti dulu:
+
+| Prioritas | Fitur                                    |
+| --------- | ---------------------------------------- |
+| 1         | Landing page                             |
+| 2         | Login mahasiswa dengan NIM               |
+| 3         | Wajib ganti password pertama             |
+| 4         | Dashboard mahasiswa                      |
+| 5         | Dashboard admin                          |
+| 6         | Manajemen mahasiswa                      |
+| 7         | Manajemen voting                         |
+| 8         | Manajemen pilihan nama/kandidat          |
+| 9         | Detail nama angkatan                     |
+| 10        | Voting single choice dan multiple choice |
+| 11        | Batas maksimal pilihan                   |
+| 12        | Satu mahasiswa satu voting per sesi      |
+| 13        | Monitoring partisipasi                   |
+| 14        | Hasil voting                             |
+| 15        | Reset password lewat email               |
+
+Fitur tambahan setelah MVP:
+
+| Fitur Lanjutan        | Fungsi                              |
+| --------------------- | ----------------------------------- |
+| Export PDF/Excel      | Laporan hasil voting                |
+| Grafik hasil voting   | Visualisasi hasil                   |
+| Pengumuman            | Info resmi dari admin               |
+| Notifikasi email      | Mengingatkan mahasiswa untuk voting |
+| Voting final otomatis | Membuat voting final dari 5 besar   |
+| Audit log detail      | Riwayat aktivitas sistem            |
+
+---
+
+# Kesimpulan Konsep Final
+
+Konsep terbaiknya adalah membuat **Sistem E-Voting Angkatan 1 ITH** yang fleksibel dan bisa digunakan untuk berbagai kebutuhan voting mahasiswa.
+
+Untuk voting nama angkatan, sistem sebaiknya menggunakan **2 tahap**:
+
+```text
+Tahap 1:
+Dari banyak ide nama, mahasiswa memilih maksimal 3 nama favorit.
+
+Tahap 2:
+Dari 5 nama teratas, mahasiswa memilih 1 nama final.
+```
+
+Setiap nama angkatan memiliki detail berupa **arti, filosofi, alasan, dan nilai utama**, sehingga mahasiswa tidak hanya memilih berdasarkan nama yang terdengar bagus, tetapi juga memahami makna di balik nama tersebut.
+
+Untuk voting ketua angkatan, sistem menggunakan model **single choice**, yaitu mahasiswa memilih 1 kandidat berdasarkan profil, visi, dan misi.
+
+Stack yang paling disarankan:
+
+```text
+Next.js + Vercel + Supabase PostgreSQL
+```
+
+Dengan konsep ini, sistemnya tidak hanya cocok untuk voting nama angkatan, tetapi juga bisa digunakan lagi untuk voting ketua angkatan, logo, jaket, atau keputusan internal lainnya.

@@ -118,6 +118,44 @@ export default async function LiveResultsPage({ params }: { params: Promise<{ id
                     <div className="mt-1.5 text-xs font-bold text-gray-400 text-right">
                       {percentage}% dari total pemilih
                     </div>
+                    
+                    {/* Details if not candidate */}
+                    {!isCandidateType && ((item as any).philosophy || (item as any).meaning || (item as any).reason) && (
+                      <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-100 space-y-3">
+                        {(item as any).proposer && (
+                          <div className="text-xs text-gray-500 mb-2">
+                            Diusulkan oleh: <span className="font-semibold text-gray-700">{(item as any).proposer}</span>
+                            {(item as any).languageReference && (
+                               <span className="ml-2 px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded border border-indigo-100">{(item as any).languageReference}</span>
+                            )}
+                          </div>
+                        )}
+                        {(item as any).philosophy && (
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Filosofi</span>
+                            <p className="text-sm text-gray-700 mt-0.5 italic">"{(item as any).philosophy}"</p>
+                          </div>
+                        )}
+                        {(item as any).meaning && (
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Makna</span>
+                            <p className="text-sm text-gray-700 mt-0.5">{(item as any).meaning}</p>
+                          </div>
+                        )}
+                        {(item as any).mainValue && (
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Nilai Utama</span>
+                            <p className="text-sm text-gray-700 mt-0.5">{(item as any).mainValue}</p>
+                          </div>
+                        )}
+                        {(item as any).reason && (
+                          <div>
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Alasan Pengusulan</span>
+                            <p className="text-sm text-gray-700 mt-0.5 text-gray-600 italic">{(item as any).reason}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )
               })}

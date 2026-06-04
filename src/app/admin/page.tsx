@@ -70,11 +70,11 @@ export default async function AdminDashboardPage() {
       </div>
       
       {/* Quick Actions or Info Panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-gradient-to-br from-slate-900 to-[#0A0F24] rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-slate-900/20">
+      <div className="grid grid-cols-1 gap-6">
+        <div className="bg-gradient-to-br from-slate-900 to-[#0A0F24] rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-slate-900/20 w-full">
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl" />
           <h3 className="text-2xl font-bold mb-2 relative z-10">Jalankan Pemilu Baru</h3>
-          <p className="text-slate-400 mb-6 relative z-10 max-w-sm">
+          <p className="text-slate-400 mb-6 relative z-10 max-w-2xl">
             Buat kegiatan E-Voting untuk Nama Angkatan, Ketua Angkatan, atau polling umum lainnya secara instan.
           </p>
           <Link 
