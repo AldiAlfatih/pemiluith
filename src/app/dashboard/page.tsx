@@ -120,11 +120,11 @@ export default async function StudentDashboardPage({
                     <div className="bg-white p-3 rounded-xl border border-slate-100 mb-5 space-y-3 shadow-sm">
                       <div className="flex justify-between items-center text-xs font-medium">
                         <span className="text-slate-400">Mulai</span>
-                        <span className="text-slate-800">{format(election.startAt, "dd MMM yyyy, HH:mm", { locale: id })}</span>
+                        <span className="text-slate-800">{format(new Date(election.startAt.getTime() + 8 * 60 * 60 * 1000), "dd MMM yyyy, HH:mm 'WITA'", { locale: id })}</span>
                       </div>
                       <div className="flex justify-between items-center text-xs font-medium border-t border-slate-50 pt-2">
                         <span className="text-slate-400">Selesai</span>
-                        <span className="text-slate-800">{format(election.endAt, "dd MMM yyyy, HH:mm", { locale: id })}</span>
+                        <span className="text-slate-800">{format(new Date(election.endAt.getTime() + 8 * 60 * 60 * 1000), "dd MMM yyyy, HH:mm 'WITA'", { locale: id })}</span>
                       </div>
                       <div className="flex justify-between items-center text-xs font-medium border-t border-slate-50 pt-2">
                         <span className="text-slate-400">Total Suara</span>

@@ -67,9 +67,9 @@ export default async function ElectionsPage() {
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug">{election.title}</h3>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-medium text-slate-400">
-                      <span>Mulai: {format(election.startAt, "dd MMM yy, HH:mm", { locale: id })}</span>
+                      <span>Mulai: {format(new Date(election.startAt.getTime() + 8 * 60 * 60 * 1000), "dd MMM yy, HH:mm 'WITA'", { locale: id })}</span>
                       <span>·</span>
-                      <span>Selesai: {format(election.endAt, "dd MMM yy, HH:mm", { locale: id })}</span>
+                      <span>Selesai: {format(new Date(election.endAt.getTime() + 8 * 60 * 60 * 1000), "dd MMM yy, HH:mm 'WITA'", { locale: id })}</span>
                     </div>
                   </div>
 

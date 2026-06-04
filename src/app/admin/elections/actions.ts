@@ -16,8 +16,8 @@ export async function createElection(formData: FormData) {
   const minChoices = parseInt(formData.get("minChoices") as string) || 1
   const maxChoices = parseInt(formData.get("maxChoices") as string) || 1
   
-  const startAt = new Date(formData.get("startAt") as string)
-  const endAt = new Date(formData.get("endAt") as string)
+  const startAt = new Date(`${formData.get("startAt")}+08:00`)
+  const endAt = new Date(`${formData.get("endAt")}+08:00`)
 
   if (!title || !type || !method || !startAt || !endAt) {
     throw new Error("Harap lengkapi semua field wajib")
@@ -57,8 +57,8 @@ export async function updateElection(id: string, formData: FormData) {
   const minChoices = parseInt(formData.get("minChoices") as string) || 1
   const maxChoices = parseInt(formData.get("maxChoices") as string) || 1
   
-  const startAt = new Date(formData.get("startAt") as string)
-  const endAt = new Date(formData.get("endAt") as string)
+  const startAt = new Date(`${formData.get("startAt")}+08:00`)
+  const endAt = new Date(`${formData.get("endAt")}+08:00`)
 
   if (!title || !type || !method || !startAt || !endAt) {
     throw new Error("Harap lengkapi semua field wajib")
