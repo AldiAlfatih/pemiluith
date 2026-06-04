@@ -3,6 +3,7 @@ import { auth } from "@/auth"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
 import VotingClientForm from "./VotingClientForm"
+import CountdownTimer from "@/components/CountdownTimer"
 
 export default async function VotingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -77,7 +78,10 @@ export default async function VotingPage({ params }: { params: Promise<{ id: str
           </svg>
           Kembali
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{election.title}</h1>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{election.title}</h1>
+          <CountdownTimer targetDate={election.endAt} />
+        </div>
         {election.description && (
           <p className="text-gray-600 mt-3 text-lg leading-relaxed max-w-3xl">{election.description}</p>
         )}

@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ArrowLeft, Users, Settings2 } from "lucide-react"
 import ManageCandidatesClient from "./ManageCandidatesClient"
 import ManageOptionsClient from "./ManageOptionsClient"
+import BlastNotificationButton from "./BlastNotificationButton"
 
 export default async function ManageElectionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -51,6 +52,10 @@ export default async function ManageElectionPage({ params }: { params: Promise<{
           <ManageOptionsClient electionId={election.id} options={election.options} />
         )}
       </div>
+
+      {election.status === "ACTIVE" && (
+        <BlastNotificationButton electionId={election.id} />
+      )}
     </div>
   )
 }

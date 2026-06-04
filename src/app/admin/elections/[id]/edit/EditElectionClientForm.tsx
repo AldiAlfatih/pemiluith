@@ -90,11 +90,11 @@ export default function EditElectionClientForm({ election }: { election: any }) 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="block text-sm font-bold text-slate-700">Waktu Dimulai <span className="text-red-500">*</span></label>
-              <input type="datetime-local" name="startAt" defaultValue={new Date(election.startAt).toISOString().slice(0, 16)} required className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+              <input type="datetime-local" name="startAt" defaultValue={new Date(new Date(election.startAt).getTime() + 8 * 60 * 60 * 1000).toISOString().slice(0, 16)} required className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
             </div>
             <div className="space-y-2">
               <label className="block text-sm font-bold text-slate-700">Waktu Ditutup <span className="text-red-500">*</span></label>
-              <input type="datetime-local" name="endAt" defaultValue={new Date(election.endAt).toISOString().slice(0, 16)} required className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+              <input type="datetime-local" name="endAt" defaultValue={new Date(new Date(election.endAt).getTime() + 8 * 60 * 60 * 1000).toISOString().slice(0, 16)} required className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
             </div>
           </div>
 

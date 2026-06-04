@@ -3,9 +3,12 @@ import { auth } from "@/auth"
 import Link from "next/link"
 import { Calendar, CheckCircle, Clock, ChevronRight, Vote } from "lucide-react"
 import { format } from "date-fns"
+import { formatInTimeZone } from "date-fns-tz"
 import { id } from "date-fns/locale"
 import DashboardSearch from "./DashboardSearch"
 import { Suspense } from "react"
+import CountdownTimer from "@/components/CountdownTimer"
+import PushNotificationManager from "@/components/PushNotificationManager"
 
 export default async function StudentDashboardPage({
   searchParams,
@@ -42,6 +45,8 @@ export default async function StudentDashboardPage({
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       
+      <PushNotificationManager />
+
       {/* Welcome Banner */}
       <div className="relative overflow-hidden bg-white rounded-3xl p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/3" />
@@ -112,7 +117,15 @@ export default async function StudentDashboardPage({
                         </span>
                       )}
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mt-2 leading-snug group-hover:text-blue-700 transition-colors">{election.title}</h3>
+
+                    <div className="flex justify-between items-start gap-2 mt-2">
+                      <h3 className="text-xl font-bold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors">{election.title}</h3>
+                      {isActive && (
+                         <div className="shrink-0 mt-0.5">
+                           <CountdownTimer targetDate={election.endAt} />
+                         </div>
+                      )}
+                    </div>
                     <p className="text-sm text-slate-500 mt-3 line-clamp-2 leading-relaxed">{election.description}</p>
                   </div>
                   
@@ -120,11 +133,11 @@ export default async function StudentDashboardPage({
                     <div className="bg-white p-3 rounded-xl border border-slate-100 mb-5 space-y-3 shadow-sm">
                       <div className="flex justify-between items-center text-xs font-medium">
                         <span className="text-slate-400">Mulai</span>
-                        <span className="text-slate-800">{format(new Date(election.startAt.getTime() + 8 * 60 * 60 * 1000), "dd MMM yyyy, HH:mm 'WITA'", { locale: id })}</span>
+                        <span className="text-slate-800">{formatInTimeZone(election.startAt, 'Asia/Makassar', "dd MMM yyyy, HH:mm 'WITA'", { locale: id })}</span>
                       </div>
                       <div className="flex justify-between items-center text-xs font-medium border-t border-slate-50 pt-2">
                         <span className="text-slate-400">Selesai</span>
-                        <span className="text-slate-800">{format(new Date(election.endAt.getTime() + 8 * 60 * 60 * 1000), "dd MMM yyyy, HH:mm 'WITA'", { locale: id })}</span>
+                        <span className="text-slate-800">{formatInTimeZone(election.endAt, 'Asia/Makassar', "dd MMM yyyy, HH:mm 'WITA'", { locale: id })}</span>
                       </div>
                       <div className="flex justify-between items-center text-xs font-medium border-t border-slate-50 pt-2">
                         <span className="text-slate-400">Total Suara</span>

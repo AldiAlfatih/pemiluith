@@ -3,6 +3,7 @@ import { auth } from "@/auth"
 import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
 import RecentVotersTicker from "./RecentVotersTicker"
+import CountdownTimer from "@/components/CountdownTimer"
 
 export default async function LiveResultsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -62,10 +63,11 @@ export default async function LiveResultsPage({ params }: { params: Promise<{ id
       </div>
 
       <div className="mb-8 border-b border-gray-200 pb-6">
-        <div className="flex justify-end items-start mb-6">
+        <div className="flex justify-between items-start mb-6">
           <span className={`px-3 py-1 text-xs font-bold rounded-md tracking-wide ${isClosed ? "bg-gray-100 text-gray-600" : "bg-green-100 text-green-700"}`}>
             {isClosed ? "HASIL AKHIR" : "LIVE RESULTS"}
           </span>
+          {!isClosed && <CountdownTimer targetDate={election.endAt} size="md" />}
         </div>
         
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{election.title}</h1>
