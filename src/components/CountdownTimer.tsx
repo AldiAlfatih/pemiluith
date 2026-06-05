@@ -5,7 +5,7 @@ import { formatDistanceToNow, differenceInSeconds } from "date-fns"
 import { id } from "date-fns/locale"
 import confetti from "canvas-confetti"
 
-export default function CountdownTimer({ targetDate, size = "sm" }: { targetDate: Date | string, size?: "sm" | "md" | "lg" }) {
+export default function CountdownTimer({ targetDate, size = "sm", mode = "end" }: { targetDate: Date | string, size?: "sm" | "md" | "lg", mode?: "start" | "end" }) {
   const [timeLeft, setTimeLeft] = useState<string>("")
   const [diffSeconds, setDiffSeconds] = useState<number | null>(null)
   const [isEnded, setIsEnded] = useState(false)
@@ -52,14 +52,14 @@ export default function CountdownTimer({ targetDate, size = "sm" }: { targetDate
   }
 
   useEffect(() => {
-    if (diffSeconds !== null) {
+    if (diffSeconds !== null && mode === "end") {
       if (diffSeconds > 0 && diffSeconds <= 10) {
         playBeep(800, 150); // Beep!
       } else if (diffSeconds === 0 && !hasFiredConfetti.current) {
         playTada(); // Festive sound!
       }
     }
-  }, [diffSeconds])
+  }, [diffSeconds, mode])
 
   useEffect(() => {
     const target = new Date(targetDate)
@@ -70,11 +70,11 @@ export default function CountdownTimer({ targetDate, size = "sm" }: { targetDate
 
       if (diff <= 0) {
         setIsEnded(true)
-        setTimeLeft("WAKTU HABIS")
+        setTimeLeft(mode === "start" ? "WAKTU MULAI" : "WAKTU HABIS")
         
-        // Only fire confetti if the user actually watched it transition to 0
+        // Only fire confetti if the user actually watched it transition to 0 and mode is end
         setDiffSeconds((prevDiff) => {
-          if (prevDiff !== null && prevDiff > 0 && !hasFiredConfetti.current) {
+          if (prevDiff !== null && prevDiff > 0 && !hasFiredConfetti.current && mode === "end") {
             hasFiredConfetti.current = true
             fireConfetti()
             
@@ -82,6 +82,8 @@ export default function CountdownTimer({ targetDate, size = "sm" }: { targetDate
             setTimeout(() => {
               window.location.reload()
             }, 5000)
+          } else if (prevDiff !== null && prevDiff > 0 && mode === "start") {
+            setTimeout(() => window.location.reload(), 1000)
           }
           return diff
         })
@@ -90,11 +92,12 @@ export default function CountdownTimer({ targetDate, size = "sm" }: { targetDate
 
       setDiffSeconds(diff)
 
+      const prefix = mode === "start" ? "Mulai" : "Tutup"
       if (diff <= 60) {
-        setTimeLeft(`Tutup dalam ${diff} detik`)
+        setTimeLeft(`${prefix} dalam ${diff} detik`)
       } else {
         const distance = formatDistanceToNow(target, { locale: id, addSuffix: true })
-        setTimeLeft("Tutup " + distance)
+        setTimeLeft(`${prefix} ${distance}`)
       }
     }
 

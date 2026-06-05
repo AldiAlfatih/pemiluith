@@ -131,7 +131,7 @@ export default async function StudentDashboardPage({
                       {isUpcoming && election.startAt && (
                          <div className="shrink-0 mt-0.5">
                            <div className="text-[10px] text-slate-500 font-bold mb-1 text-right">Dimulai dalam:</div>
-                           <CountdownTimer targetDate={election.startAt} />
+                           <CountdownTimer targetDate={election.startAt} mode="start" />
                          </div>
                       )}
                     </div>
