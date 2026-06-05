@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { submitVote } from "./actions"
 import Swal from "sweetalert2"
 import { ExternalLink, Link2, Globe } from "lucide-react"
+import { getDirectImageUrl } from "@/lib/utils"
 
 type Item = {
   id: string
@@ -131,7 +132,7 @@ export default function VotingClientForm({
                     <div className="flex flex-col sm:flex-row gap-4 mb-4">
                       {item.photoUrl ? (
                         <img 
-                          src={item.photoUrl} 
+                          src={getDirectImageUrl(item.photoUrl)} 
                           alt={item.name} 
                           className="w-24 h-24 sm:w-20 sm:h-20 rounded-xl object-cover border border-gray-200 shadow-sm flex-shrink-0" 
                           onError={(e) => {

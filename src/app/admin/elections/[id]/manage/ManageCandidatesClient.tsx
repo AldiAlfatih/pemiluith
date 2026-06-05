@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { addCandidate, updateCandidate, toggleCandidateStatus, deleteCandidate } from "../../actions"
 import { UserPlus, Save, X, Edit, Eye, EyeOff, Trash2 } from "lucide-react"
+import { getDirectImageUrl } from "@/lib/utils"
 import ConfirmModal from "@/components/ConfirmModal"
 
 export default function ManageCandidatesClient({ electionId, candidates }: { electionId: string, candidates: any[] }) {
@@ -67,7 +68,7 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
               <div className="flex gap-4">
                 {c.photoUrl ? (
                   <img 
-                    src={c.photoUrl} 
+                    src={getDirectImageUrl(c.photoUrl)} 
                     alt={c.name} 
                     className="w-16 h-16 rounded-xl object-cover flex-shrink-0 border border-slate-200" 
                     onError={(e) => {
