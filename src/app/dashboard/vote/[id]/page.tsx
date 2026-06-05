@@ -28,8 +28,9 @@ export default async function VotingPage({ params }: { params: Promise<{ id: str
 
   // Verify status and time
   const now = new Date()
-  const isUpcoming = now < election.startAt
-  const isClosed = now > election.endAt || election.status === "CLOSED"
+  const isComingSoonStatus = election.isComingSoon || !election.startAt || !election.endAt
+  const isUpcoming = isComingSoonStatus || now < (election.startAt as Date)
+  const isClosed = (!isComingSoonStatus && now > (election.endAt as Date)) || election.status === "CLOSED"
   const isActive = !isUpcoming && !isClosed && election.status === "ACTIVE"
 
   if (!isActive) {
@@ -80,7 +81,7 @@ export default async function VotingPage({ params }: { params: Promise<{ id: str
         </Link>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{election.title}</h1>
-          <CountdownTimer targetDate={election.endAt} />
+          {election.endAt && <CountdownTimer targetDate={election.endAt} />}
         </div>
         {election.description && (
           <p className="text-gray-600 mt-3 text-lg leading-relaxed max-w-3xl">{election.description}</p>

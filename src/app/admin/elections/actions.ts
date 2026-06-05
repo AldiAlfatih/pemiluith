@@ -16,14 +16,27 @@ export async function createElection(formData: FormData) {
   const minChoices = parseInt(formData.get("minChoices") as string) || 1
   const maxChoices = parseInt(formData.get("maxChoices") as string) || 1
   
-  const startAt = new Date(`${formData.get("startAt")}+08:00`)
-  const endAt = new Date(`${formData.get("endAt")}+08:00`)
+  const isComingSoon = formData.get("isComingSoon") === "true" || formData.get("isComingSoon") === "on"
+  
+  let startAt: Date | null = null
+  let endAt: Date | null = null
 
-  if (!title || !type || !method || !startAt || !endAt) {
-    throw new Error("Harap lengkapi semua field wajib")
+  if (formData.get("startAt")) {
+    startAt = new Date(`${formData.get("startAt")}+08:00`)
+  }
+  if (formData.get("endAt")) {
+    endAt = new Date(`${formData.get("endAt")}+08:00`)
   }
 
-  if (startAt >= endAt) {
+  if (!title || !type || !method) {
+    throw new Error("Harap lengkapi field Judul, Tipe, dan Metode")
+  }
+
+  if (!isComingSoon && (!startAt || !endAt)) {
+    throw new Error("Jadwal mulai dan selesai wajib diisi jika tidak menandai Coming Soon")
+  }
+
+  if (startAt && endAt && startAt >= endAt) {
     throw new Error("Waktu selesai harus setelah waktu mulai")
   }
 
@@ -35,6 +48,7 @@ export async function createElection(formData: FormData) {
       method,
       minChoices,
       maxChoices,
+      isComingSoon,
       startAt,
       endAt,
       status: "ACTIVE", // Or DRAFT depending on your workflow
@@ -57,14 +71,27 @@ export async function updateElection(id: string, formData: FormData) {
   const minChoices = parseInt(formData.get("minChoices") as string) || 1
   const maxChoices = parseInt(formData.get("maxChoices") as string) || 1
   
-  const startAt = new Date(`${formData.get("startAt")}+08:00`)
-  const endAt = new Date(`${formData.get("endAt")}+08:00`)
+  const isComingSoon = formData.get("isComingSoon") === "true" || formData.get("isComingSoon") === "on"
+  
+  let startAt: Date | null = null
+  let endAt: Date | null = null
 
-  if (!title || !type || !method || !startAt || !endAt) {
-    throw new Error("Harap lengkapi semua field wajib")
+  if (formData.get("startAt")) {
+    startAt = new Date(`${formData.get("startAt")}+08:00`)
+  }
+  if (formData.get("endAt")) {
+    endAt = new Date(`${formData.get("endAt")}+08:00`)
   }
 
-  if (startAt >= endAt) {
+  if (!title || !type || !method) {
+    throw new Error("Harap lengkapi field Judul, Tipe, dan Metode")
+  }
+
+  if (!isComingSoon && (!startAt || !endAt)) {
+    throw new Error("Jadwal mulai dan selesai wajib diisi jika tidak menandai Coming Soon")
+  }
+
+  if (startAt && endAt && startAt >= endAt) {
     throw new Error("Waktu selesai harus setelah waktu mulai")
   }
 
@@ -77,6 +104,7 @@ export async function updateElection(id: string, formData: FormData) {
       method,
       minChoices,
       maxChoices,
+      isComingSoon,
       startAt,
       endAt,
     }

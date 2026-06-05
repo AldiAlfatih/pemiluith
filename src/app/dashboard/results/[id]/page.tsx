@@ -42,7 +42,8 @@ export default async function LiveResultsPage({ params }: { params: Promise<{ id
 
   // Verify access rules
   const now = new Date()
-  const isClosed = now > election.endAt || election.status === "CLOSED"
+  const isComingSoonStatus = election.isComingSoon || !election.startAt || !election.endAt
+  const isClosed = (!isComingSoonStatus && election.endAt && now > election.endAt) || election.status === "CLOSED"
 
   const isCandidateType = election.type === "KETUA_ANGKATAN"
   const rawItems = isCandidateType ? election.candidates : election.options
@@ -67,7 +68,7 @@ export default async function LiveResultsPage({ params }: { params: Promise<{ id
           <span className={`px-3 py-1 text-xs font-bold rounded-md tracking-wide ${isClosed ? "bg-gray-100 text-gray-600" : "bg-green-100 text-green-700"}`}>
             {isClosed ? "HASIL AKHIR" : "LIVE RESULTS"}
           </span>
-          {!isClosed && <CountdownTimer targetDate={election.endAt} size="md" />}
+          {!isClosed && election.endAt && <CountdownTimer targetDate={election.endAt} size="md" />}
         </div>
         
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{election.title}</h1>

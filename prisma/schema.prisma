@@ -48,8 +48,9 @@ model Election {
   method                  ElectionMethod
   minChoices              Int       @default(1) @map("min_choices")
   maxChoices              Int       @default(1) @map("max_choices")
-  startAt                 DateTime  @map("start_at")
-  endAt                   DateTime  @map("end_at")
+  isComingSoon            Boolean   @default(false) @map("is_coming_soon")
+  startAt                 DateTime? @map("start_at")
+  endAt                   DateTime? @map("end_at")
   status                  ElectionStatus @default(DRAFT)
   showLiveResult          Boolean   @default(false) @map("show_live_result")
   showResultAfterClosed   Boolean   @default(true) @map("show_result_after_closed")

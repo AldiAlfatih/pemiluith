@@ -87,8 +87,9 @@ export default async function StudentDashboardPage({
             {elections.map((election: any, i: number) => {
               const hasVoted = election.votes.length > 0
               const now = new Date()
-              const isUpcoming = now < election.startAt
-              const isClosed = now > election.endAt || election.status === "CLOSED"
+              const isComingSoonStatus = election.isComingSoon || !election.startAt || !election.endAt
+              const isUpcoming = isComingSoonStatus || now < new Date(election.startAt)
+              const isClosed = (!isComingSoonStatus && now > new Date(election.endAt)) || election.status === "CLOSED"
               const isActive = !isUpcoming && !isClosed && election.status === "ACTIVE"
               const totalVotes = election._count.votes
 
@@ -104,12 +105,13 @@ export default async function StudentDashboardPage({
                     <div className="flex flex-wrap items-start gap-2 mb-4">
                       <span className={`px-3 py-1.5 text-[11px] font-bold rounded-full border whitespace-nowrap ${
                         isActive ? "bg-green-50 text-green-700 border-green-200" :
+                        isComingSoonStatus ? "bg-amber-50 text-amber-700 border-amber-200" :
                         isUpcoming ? "bg-amber-50 text-amber-700 border-amber-200" :
                         "bg-slate-50 text-slate-600 border-slate-200"
                       }`}>
                         {isActive ? (
                           <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" /> SEDANG BERLANGSUNG</span>
-                        ) : isUpcoming ? "⏳ AKAN DATANG" : "⚫ SELESAI"}
+                        ) : isComingSoonStatus ? "⏳ SEGERA HADIR" : isUpcoming ? "⏳ AKAN DATANG" : "⚫ SELESAI"}
                       </span>
                       {hasVoted && (
                         <span className="flex items-center gap-1.5 text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap">
@@ -120,7 +122,7 @@ export default async function StudentDashboardPage({
 
                     <div className="flex justify-between items-start gap-2 mt-2">
                       <h3 className="text-xl font-bold text-slate-900 leading-snug group-hover:text-blue-700 transition-colors">{election.title}</h3>
-                      {isActive && (
+                      {isActive && election.endAt && (
                          <div className="shrink-0 mt-0.5">
                            <CountdownTimer targetDate={election.endAt} />
                          </div>
@@ -133,11 +135,11 @@ export default async function StudentDashboardPage({
                     <div className="bg-white p-3 rounded-xl border border-slate-100 mb-5 space-y-3 shadow-sm">
                       <div className="flex justify-between items-center text-xs font-medium">
                         <span className="text-slate-400">Mulai</span>
-                        <span className="text-slate-800">{formatInTimeZone(election.startAt, 'Asia/Makassar', "dd MMM yyyy, HH:mm 'WITA'", { locale: id })}</span>
+                        <span className="text-slate-800">{election.startAt ? formatInTimeZone(election.startAt, 'Asia/Makassar', "dd MMM yyyy, HH:mm 'WITA'", { locale: id }) : 'Menunggu Jadwal'}</span>
                       </div>
                       <div className="flex justify-between items-center text-xs font-medium border-t border-slate-50 pt-2">
                         <span className="text-slate-400">Selesai</span>
-                        <span className="text-slate-800">{formatInTimeZone(election.endAt, 'Asia/Makassar', "dd MMM yyyy, HH:mm 'WITA'", { locale: id })}</span>
+                        <span className="text-slate-800">{election.endAt ? formatInTimeZone(election.endAt, 'Asia/Makassar', "dd MMM yyyy, HH:mm 'WITA'", { locale: id }) : 'Menunggu Jadwal'}</span>
                       </div>
                       <div className="flex justify-between items-center text-xs font-medium border-t border-slate-50 pt-2">
                         <span className="text-slate-400">Total Suara</span>

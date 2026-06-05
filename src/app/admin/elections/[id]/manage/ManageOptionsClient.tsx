@@ -104,7 +104,7 @@ export default function ManageOptionsClient({ electionId, options }: { electionI
 
       <button 
         onClick={() => setIsAdding(true)}
-        className="flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-blue-200 text-blue-600 font-bold rounded-2xl hover:bg-blue-50 transition-colors"
+        className="flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-orange-200 text-orange-600 font-bold rounded-2xl hover:bg-orange-50 transition-colors"
       >
         <PlusCircle size={18} /> Tambah Opsi Baru
       </button>
@@ -143,7 +143,7 @@ export default function ManageOptionsClient({ electionId, options }: { electionI
                 <button type="button" onClick={() => { setIsAdding(false); setEditingId(null); }} className="flex-1 py-3 text-slate-600 font-semibold hover:bg-slate-50 rounded-xl transition-colors">
                   Batal
                 </button>
-                <button type="submit" disabled={loading} className="flex-1 flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl disabled:opacity-50 transition-colors shadow-sm hover:shadow">
+                <button type="submit" disabled={loading} className="flex-1 flex justify-center items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl disabled:opacity-50 transition-colors shadow-sm hover:shadow">
                   <Save size={18} /> {loading ? "Menyimpan..." : "Simpan"}
                 </button>
               </div>

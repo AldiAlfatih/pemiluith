@@ -25,7 +25,7 @@ export default async function ElectionsPage() {
         </div>
         <Link 
           href="/admin/elections/create"
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm shadow-blue-500/20 hover:-translate-y-0.5 text-sm"
+          className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-5 rounded-xl transition-all shadow-sm shadow-orange-500/20 text-sm"
         >
           <Plus size={18} />
           Buat Voting Baru
@@ -44,8 +44,9 @@ export default async function ElectionsPage() {
         ) : (
           elections.map((election: any) => {
             const now = new Date()
-            const isUpcoming = now < election.startAt
-            const isClosed = now > election.endAt || election.status === "CLOSED"
+            const isComingSoonStatus = election.isComingSoon || !election.startAt || !election.endAt
+            const isUpcoming = isComingSoonStatus || now < new Date(election.startAt)
+            const isClosed = (!isComingSoonStatus && now > new Date(election.endAt)) || election.status === "CLOSED"
             const isActive = !isUpcoming && !isClosed && election.status === "ACTIVE"
             const totalItems = election._count.candidates + election._count.options
 
@@ -57,10 +58,11 @@ export default async function ElectionsPage() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className={`px-2.5 py-0.5 text-[11px] font-bold rounded-full border ${
                         isActive ? "bg-green-50 text-green-700 border-green-200" :
+                        isComingSoonStatus ? "bg-amber-50 text-amber-700 border-amber-200" :
                         isUpcoming ? "bg-amber-50 text-amber-700 border-amber-200" :
                         "bg-slate-50 text-slate-600 border-slate-200"
                       }`}>
-                        {isActive ? "● AKTIF" : isUpcoming ? "⏳ MENUNGGU" : "✓ SELESAI"}
+                        {isActive ? "● AKTIF" : isComingSoonStatus ? "⏳ COMING SOON" : isUpcoming ? "⏳ MENUNGGU" : "✓ SELESAI"}
                       </span>
                       <span className="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-purple-50 text-purple-700 border border-purple-200">
                         {election.type.replace(/_/g, " ")}
@@ -68,9 +70,9 @@ export default async function ElectionsPage() {
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-snug">{election.title}</h3>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-medium text-slate-400">
-                      <span>Mulai: {formatInTimeZone(election.startAt, 'Asia/Makassar', "dd MMM yy, HH:mm 'WITA'", { locale: id })}</span>
+                      <span>Mulai: {election.startAt ? formatInTimeZone(election.startAt, 'Asia/Makassar', "dd MMM yy, HH:mm 'WITA'", { locale: id }) : '-'}</span>
                       <span>·</span>
-                      <span>Selesai: {formatInTimeZone(election.endAt, 'Asia/Makassar', "dd MMM yy, HH:mm 'WITA'", { locale: id })}</span>
+                      <span>Selesai: {election.endAt ? formatInTimeZone(election.endAt, 'Asia/Makassar', "dd MMM yy, HH:mm 'WITA'", { locale: id }) : '-'}</span>
                     </div>
                   </div>
 
@@ -91,7 +93,7 @@ export default async function ElectionsPage() {
                 <div className="flex items-center gap-2 pt-3 border-t border-slate-100">
                   <Link
                     href={`/admin/elections/${election.id}/manage`}
-                    className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors"
+                    className="flex items-center gap-1.5 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors shadow-sm"
                   >
                     <Settings2 size={14} /> Kelola
                   </Link>

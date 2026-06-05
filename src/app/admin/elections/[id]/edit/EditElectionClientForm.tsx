@@ -87,14 +87,38 @@ export default function EditElectionClientForm({ election }: { election: any }) 
             </div>
           )}
 
+          <div className="bg-amber-50 p-6 rounded-2xl border border-amber-200">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <div className="flex items-center h-5 mt-1">
+                <input 
+                  type="checkbox" 
+                  name="isComingSoon" 
+                  defaultChecked={election.isComingSoon}
+                  className="w-5 h-5 rounded border-amber-300 text-amber-600 focus:ring-amber-500" 
+                  onChange={(e) => {
+                    const isChecked = e.target.checked;
+                    const startInput = document.querySelector('input[name="startAt"]') as HTMLInputElement;
+                    const endInput = document.querySelector('input[name="endAt"]') as HTMLInputElement;
+                    if (startInput) startInput.required = !isChecked;
+                    if (endInput) endInput.required = !isChecked;
+                  }}
+                />
+              </div>
+              <div>
+                <span className="block text-sm font-bold text-amber-900">Tandai sebagai "Coming Soon"</span>
+                <span className="block text-xs text-amber-700 mt-1">Jika dicentang, mahasiswa hanya akan melihat status "Segera Hadir". Anda tidak diwajibkan untuk mengisi waktu mulai dan selesai.</span>
+              </div>
+            </label>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Waktu Dimulai <span className="text-red-500">*</span></label>
-              <input type="datetime-local" name="startAt" defaultValue={new Date(new Date(election.startAt).getTime() + 8 * 60 * 60 * 1000).toISOString().slice(0, 16)} required className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+              <label className="block text-sm font-bold text-slate-700">Waktu Dimulai <span className="text-slate-400 font-normal text-xs">(Abaikan jika Coming Soon)</span></label>
+              <input type="datetime-local" name="startAt" defaultValue={election.startAt ? new Date(new Date(election.startAt).getTime() + 8 * 60 * 60 * 1000).toISOString().slice(0, 16) : ""} required={!election.isComingSoon} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Waktu Ditutup <span className="text-red-500">*</span></label>
-              <input type="datetime-local" name="endAt" defaultValue={new Date(new Date(election.endAt).getTime() + 8 * 60 * 60 * 1000).toISOString().slice(0, 16)} required className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+              <label className="block text-sm font-bold text-slate-700">Waktu Ditutup <span className="text-slate-400 font-normal text-xs">(Abaikan jika Coming Soon)</span></label>
+              <input type="datetime-local" name="endAt" defaultValue={election.endAt ? new Date(new Date(election.endAt).getTime() + 8 * 60 * 60 * 1000).toISOString().slice(0, 16) : ""} required={!election.isComingSoon} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
             </div>
           </div>
 
@@ -102,7 +126,7 @@ export default function EditElectionClientForm({ election }: { election: any }) 
             <button 
               type="submit" 
               disabled={loading}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all disabled:opacity-50 shadow-sm shadow-blue-500/30 hover:-translate-y-0.5"
+              className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-xl transition-all disabled:opacity-50 shadow-sm shadow-orange-500/30 hover:-translate-y-0.5"
             >
               <Save size={18} /> {loading ? "Menyimpan..." : "Simpan Perubahan"}
             </button>
