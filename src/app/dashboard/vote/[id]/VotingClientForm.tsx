@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { submitVote } from "./actions"
 import Swal from "sweetalert2"
-import { Linkedin, Instagram, Globe } from "lucide-react"
+import { ExternalLink, Link2, Globe } from "lucide-react"
 
 type Item = {
   id: string
@@ -156,12 +156,12 @@ export default function VotingClientForm({
                       <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2 flex-wrap">
                         {item.linkedinUrl && (
                           <a href={item.linkedinUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-50 px-3 py-2 rounded-lg hover:bg-blue-100 transition-colors border border-blue-100">
-                            <Linkedin size={14} /> LinkedIn
+                            <ExternalLink size={14} /> LinkedIn
                           </a>
                         )}
                         {item.instagramUrl && (
                           <a href={item.instagramUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1.5 text-xs font-semibold text-pink-700 bg-pink-50 px-3 py-2 rounded-lg hover:bg-pink-100 transition-colors border border-pink-100">
-                            <Instagram size={14} /> Instagram
+                            <Link2 size={14} /> Instagram
                           </a>
                         )}
                         {item.portfolioUrl && (
