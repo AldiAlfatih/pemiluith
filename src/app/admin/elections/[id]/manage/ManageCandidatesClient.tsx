@@ -11,6 +11,43 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
   const [editingId, setEditingId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<string | null>(null)
+  const [photoBase64, setPhotoBase64] = useState<string>("")
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        
+        const MAX = 400;
+        if (width > height) {
+          if (width > MAX) {
+            height *= MAX / width;
+            width = MAX;
+          }
+        } else {
+          if (height > MAX) {
+            width *= MAX / height;
+            height = MAX;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, width, height);
+        setPhotoBase64(canvas.toDataURL("image/jpeg", 0.7));
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -96,7 +133,7 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
               
               <div className="flex gap-2 mt-4 pt-4 border-t border-slate-100">
                 <button 
-                  onClick={() => setEditingId(c.id)}
+                  onClick={() => { setEditingId(c.id); setPhotoBase64(""); }}
                   disabled={loading}
                   className="flex-1 flex items-center justify-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 rounded-lg text-xs font-semibold transition-colors disabled:opacity-50"
                 >
@@ -123,7 +160,7 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
       )}
 
       <button 
-        onClick={() => setIsAdding(true)}
+        onClick={() => { setIsAdding(true); setPhotoBase64(""); }}
         className="flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-orange-200 text-orange-600 font-bold rounded-2xl hover:bg-orange-50 transition-colors"
       >
         <UserPlus size={18} /> Tambah Kandidat Baru
@@ -135,7 +172,7 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
           <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center">
               <h3 className="font-bold text-xl text-slate-800">{editingId ? 'Edit Kandidat' : 'Tambah Kandidat Baru'}</h3>
-              <button onClick={() => { setIsAdding(false); setEditingId(null); }} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-full transition-colors"><X size={20}/></button>
+              <button onClick={() => { setIsAdding(false); setEditingId(null); setPhotoBase64(""); }} className="p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-full transition-colors"><X size={20}/></button>
             </div>
             
             <div className="overflow-y-auto p-6">
@@ -145,8 +182,8 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
                   return (
                     <>
                       <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">Nama Lengkap <span className="text-red-500">*</span></label>
-                        <input type="text" name="name" required placeholder="Nama kandidat..." defaultValue={editData?.name || ""} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">Nama Kandidat <span className="text-red-500">*</span></label>
+                        <input type="text" name="name" required placeholder="Cth: Budi Santoso" defaultValue={editData?.name || ""} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -171,8 +208,14 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
                         <h4 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2 mb-3">Tautan & Media (Opsional)</h4>
                         <div className="space-y-3">
                           <div>
-                            <label className="block text-xs font-semibold text-slate-700 mb-1">URL Foto Profil</label>
-                            <input type="url" name="photoUrl" placeholder="https://..." defaultValue={editData?.photoUrl || ""} className="w-full px-4 py-2 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+                            <label className="block text-xs font-semibold text-slate-700 mb-1">Foto Profil</label>
+                            <div className="flex items-center gap-3">
+                              {(photoBase64 || editData?.photoUrl) && (
+                                <img src={photoBase64 || getDirectImageUrl(editData.photoUrl)} className="w-12 h-12 rounded-lg object-cover border border-slate-200" alt="Preview" />
+                              )}
+                              <input type="file" accept="image/*" onChange={handleImageUpload} className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer" />
+                              <input type="hidden" name="photoUrl" value={photoBase64 || editData?.photoUrl || ""} />
+                            </div>
                           </div>
                           <div>
                             <label className="block text-xs font-semibold text-slate-700 mb-1">URL LinkedIn</label>
@@ -197,7 +240,7 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
             </div>
             
             <div className="p-6 border-t border-slate-100 flex gap-3">
-              <button onClick={() => { setIsAdding(false); setEditingId(null); }} className="flex-1 py-3 text-slate-600 font-semibold hover:bg-slate-50 rounded-xl transition-colors">
+              <button onClick={() => { setIsAdding(false); setEditingId(null); setPhotoBase64(""); }} className="flex-1 py-3 text-slate-600 font-semibold hover:bg-slate-50 rounded-xl transition-colors">
                 Batal
               </button>
               <button form="candidate-form" type="submit" disabled={loading} className="flex-1 flex justify-center items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl disabled:opacity-50 transition-colors shadow-sm hover:shadow">
