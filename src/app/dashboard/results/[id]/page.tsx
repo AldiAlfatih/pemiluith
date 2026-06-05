@@ -40,10 +40,9 @@ export default async function LiveResultsPage({ params }: { params: Promise<{ id
 
   if (!election) notFound()
 
-  // Verify access rules
   const now = new Date()
-  const isComingSoonStatus = election.isComingSoon || !election.startAt || !election.endAt
-  const isClosed = (!isComingSoonStatus && election.endAt && now > election.endAt) || election.status === "CLOSED"
+  const hasNoDates = !election.startAt || !election.endAt
+  const isClosed = (!hasNoDates && election.endAt && now > election.endAt) || election.status === "CLOSED"
 
   const isCandidateType = election.type === "KETUA_ANGKATAN"
   const rawItems = isCandidateType ? election.candidates : election.options

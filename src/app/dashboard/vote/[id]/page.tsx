@@ -28,10 +28,10 @@ export default async function VotingPage({ params }: { params: Promise<{ id: str
 
   // Verify status and time
   const now = new Date()
-  const isComingSoonStatus = election.isComingSoon || !election.startAt || !election.endAt
-  const isUpcoming = isComingSoonStatus || now < (election.startAt as Date)
-  const isClosed = (!isComingSoonStatus && now > (election.endAt as Date)) || election.status === "CLOSED"
-  const isActive = !isUpcoming && !isClosed && election.status === "ACTIVE"
+  const hasNoDates = !election.startAt || !election.endAt
+  const isUpcoming = election.startAt ? now < (election.startAt as Date) : false
+  const isClosed = (!hasNoDates && now > (election.endAt as Date)) || election.status === "CLOSED"
+  const isActive = (!hasNoDates && !isUpcoming && !isClosed && election.status === "ACTIVE") || (election.status === "ACTIVE" && !hasNoDates && !isUpcoming && !isClosed)
 
   if (!isActive) {
     return (
