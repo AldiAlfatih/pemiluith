@@ -20,8 +20,11 @@ export async function submitVote(electionId: string, selectedIds: string[]) {
   if (!election) throw new Error("Pemilihan tidak ditemukan.")
   
   const now = new Date()
-  const isComingSoonStatus = election.isComingSoon || !election.startAt || !election.endAt
-  if (isComingSoonStatus || now < (election.startAt as Date) || now > (election.endAt as Date) || election.status !== "ACTIVE") {
+  const hasNoDates = !election.startAt || !election.endAt
+  const isUpcoming = election.startAt ? now < (election.startAt as Date) : false
+  const isClosed = (!hasNoDates && now > (election.endAt as Date)) || election.status === "CLOSED"
+
+  if (hasNoDates || isUpcoming || isClosed || election.status !== "ACTIVE") {
     throw new Error("Pemilihan ini sedang tidak aktif atau sudah ditutup.")
   }
 

@@ -50,11 +50,18 @@ export default function PushNotificationManager() {
   const subscribeToPush = async () => {
     setIsSubscribing(true)
     try {
+      const permission = await Notification.requestPermission()
+      if (permission !== 'granted') {
+        alert("Anda harus mengizinkan akses notifikasi di pengaturan browser Anda.")
+        setIsSubscribing(false)
+        return
+      }
+
       const registration = await navigator.serviceWorker.ready
       const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
       
       if (!vapidPublicKey) {
-         console.error("VAPID public key not found")
+         alert("Konfigurasi notifikasi tidak lengkap di server.")
          return
       }
 
@@ -62,16 +69,23 @@ export default function PushNotificationManager() {
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
       })
-      setSubscription(sub)
-
+      
       // Send to server
-      await fetch('/api/notifications/push/subscribe', {
+      const response = await fetch('/api/notifications/push/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sub)
       })
-    } catch (error) {
+
+      if (!response.ok) {
+        throw new Error("Gagal menyimpan ke server")
+      }
+
+      setSubscription(sub)
+      alert("Notifikasi berhasil diaktifkan!")
+    } catch (error: any) {
       console.error('Failed to subscribe:', error)
+      alert("Terjadi kesalahan: " + error.message)
     } finally {
       setIsSubscribing(false)
     }

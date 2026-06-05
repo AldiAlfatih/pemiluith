@@ -87,10 +87,11 @@ export default async function StudentDashboardPage({
             {elections.map((election: any, i: number) => {
               const hasVoted = election.votes.length > 0
               const now = new Date()
-              const isComingSoonStatus = election.isComingSoon || !election.startAt || !election.endAt
-              const isUpcoming = isComingSoonStatus || now < new Date(election.startAt)
-              const isClosed = (!isComingSoonStatus && now > new Date(election.endAt)) || election.status === "CLOSED"
-              const isActive = !isUpcoming && !isClosed && election.status === "ACTIVE"
+              const hasNoDates = !election.startAt || !election.endAt
+              const isUpcoming = election.startAt ? now < new Date(election.startAt) : false
+              const isComingSoonStatus = election.isComingSoon && (hasNoDates || isUpcoming)
+              const isClosed = (!hasNoDates && now > new Date(election.endAt)) || election.status === "CLOSED"
+              const isActive = (!hasNoDates && !isUpcoming && !isClosed && election.status === "ACTIVE") || (election.status === "ACTIVE" && !hasNoDates && !isUpcoming && !isClosed)
               const totalVotes = election._count.votes
 
               return (
@@ -125,6 +126,12 @@ export default async function StudentDashboardPage({
                       {isActive && election.endAt && (
                          <div className="shrink-0 mt-0.5">
                            <CountdownTimer targetDate={election.endAt} />
+                         </div>
+                      )}
+                      {isUpcoming && election.startAt && (
+                         <div className="shrink-0 mt-0.5">
+                           <div className="text-[10px] text-slate-500 font-bold mb-1 text-right">Dimulai dalam:</div>
+                           <CountdownTimer targetDate={election.startAt} />
                          </div>
                       )}
                     </div>

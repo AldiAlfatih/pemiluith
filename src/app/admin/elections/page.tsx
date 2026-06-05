@@ -44,10 +44,11 @@ export default async function ElectionsPage() {
         ) : (
           elections.map((election: any) => {
             const now = new Date()
-            const isComingSoonStatus = election.isComingSoon || !election.startAt || !election.endAt
-            const isUpcoming = isComingSoonStatus || now < new Date(election.startAt)
-            const isClosed = (!isComingSoonStatus && now > new Date(election.endAt)) || election.status === "CLOSED"
-            const isActive = !isUpcoming && !isClosed && election.status === "ACTIVE"
+            const hasNoDates = !election.startAt || !election.endAt
+            const isUpcoming = election.startAt ? now < new Date(election.startAt) : false
+            const isComingSoonStatus = election.isComingSoon && (hasNoDates || isUpcoming)
+            const isClosed = (!hasNoDates && now > new Date(election.endAt as Date)) || election.status === "CLOSED"
+            const isActive = (!hasNoDates && !isUpcoming && !isClosed && election.status === "ACTIVE") || (election.status === "ACTIVE" && !hasNoDates && !isUpcoming && !isClosed)
             const totalItems = election._count.candidates + election._count.options
 
             return (
