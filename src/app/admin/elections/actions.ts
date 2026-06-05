@@ -116,6 +116,10 @@ export async function addCandidate(electionId: string, formData: FormData) {
   const programStudy = formData.get("programStudy") as string
   const vision = formData.get("vision") as string
   const mission = formData.get("mission") as string
+  const photoUrl = formData.get("photoUrl") as string
+  const linkedinUrl = formData.get("linkedinUrl") as string
+  const portfolioUrl = formData.get("portfolioUrl") as string
+  const instagramUrl = formData.get("instagramUrl") as string
 
   if (!name || !nim || !programStudy) throw new Error("Nama, NIM, dan Prodi wajib diisi")
 
@@ -127,6 +131,10 @@ export async function addCandidate(electionId: string, formData: FormData) {
       programStudy,
       vision,
       mission,
+      photoUrl: photoUrl || null,
+      linkedinUrl: linkedinUrl || null,
+      portfolioUrl: portfolioUrl || null,
+      instagramUrl: instagramUrl || null,
     }
   })
 
@@ -198,12 +206,26 @@ export async function updateCandidate(id: string, electionId: string, formData: 
   const programStudy = formData.get("programStudy") as string
   const vision = formData.get("vision") as string
   const mission = formData.get("mission") as string
+  const photoUrl = formData.get("photoUrl") as string
+  const linkedinUrl = formData.get("linkedinUrl") as string
+  const portfolioUrl = formData.get("portfolioUrl") as string
+  const instagramUrl = formData.get("instagramUrl") as string
 
   if (!name || !nim || !programStudy) throw new Error("Nama, NIM, dan Prodi wajib diisi")
 
   await prisma.candidate.update({
     where: { id },
-    data: { name, nim, programStudy, vision, mission }
+    data: { 
+      name, 
+      nim, 
+      programStudy, 
+      vision, 
+      mission,
+      photoUrl: photoUrl || null,
+      linkedinUrl: linkedinUrl || null,
+      portfolioUrl: portfolioUrl || null,
+      instagramUrl: instagramUrl || null,
+    }
   })
 
   revalidatePath(`/admin/elections/${electionId}/manage`)

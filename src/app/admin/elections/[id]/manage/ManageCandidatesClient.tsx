@@ -65,9 +65,13 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
           {candidates.map((c) => (
             <div key={c.id} className={`bg-white border p-4 rounded-2xl flex flex-col justify-between ${!c.isActive ? 'border-red-200 opacity-75' : 'border-slate-200'}`}>
               <div className="flex gap-4">
-                <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0">
-                  {c.name.charAt(0)}
-                </div>
+                {c.photoUrl ? (
+                  <img src={c.photoUrl} alt={c.name} className="w-16 h-16 rounded-xl object-cover flex-shrink-0 border border-slate-200" />
+                ) : (
+                  <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0">
+                    {c.name.charAt(0)}
+                  </div>
+                )}
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
                     <h4 className="font-bold text-slate-800">{c.name}</h4>
@@ -151,6 +155,30 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Misi <span className="text-slate-400 font-normal">(Opsional)</span></label>
                         <textarea name="mission" rows={4} placeholder="Tuliskan misi kandidat..." defaultValue={editData?.mission || ""} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none"></textarea>
+                      </div>
+                      
+                      <div className="pt-2">
+                        <h4 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2 mb-3">Tautan & Media (Opsional)</h4>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-700 mb-1">URL Foto Profil</label>
+                            <input type="url" name="photoUrl" placeholder="https://..." defaultValue={editData?.photoUrl || ""} className="w-full px-4 py-2 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-700 mb-1">URL LinkedIn</label>
+                            <input type="url" name="linkedinUrl" placeholder="https://linkedin.com/in/..." defaultValue={editData?.linkedinUrl || ""} className="w-full px-4 py-2 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-700 mb-1">URL Instagram</label>
+                              <input type="url" name="instagramUrl" placeholder="https://instagram.com/..." defaultValue={editData?.instagramUrl || ""} className="w-full px-4 py-2 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold text-slate-700 mb-1">URL Portofolio</label>
+                              <input type="url" name="portfolioUrl" placeholder="https://..." defaultValue={editData?.portfolioUrl || ""} className="w-full px-4 py-2 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all" />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </>
                   )

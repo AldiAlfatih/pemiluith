@@ -123,6 +123,9 @@ model Candidate {
   nim                String
   programStudy       String    @map("program_study")
   photoUrl           String?   @map("photo_url")
+  linkedinUrl        String?   @map("linkedin_url")
+  portfolioUrl       String?   @map("portfolio_url")
+  instagramUrl       String?   @map("instagram_url")
   vision             String?   @db.Text
   mission            String?   @db.Text
   description        String?   @db.Text
