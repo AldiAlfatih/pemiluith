@@ -129,9 +129,21 @@ export default function VotingClientForm({
                 {isCandidate ? (
                   <>
                     <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                      {item.photoUrl && (
-                        <img src={item.photoUrl} alt={item.name} className="w-24 h-24 sm:w-20 sm:h-20 rounded-xl object-cover border border-gray-200 shadow-sm flex-shrink-0" />
-                      )}
+                      {item.photoUrl ? (
+                        <img 
+                          src={item.photoUrl} 
+                          alt={item.name} 
+                          className="w-24 h-24 sm:w-20 sm:h-20 rounded-xl object-cover border border-gray-200 shadow-sm flex-shrink-0" 
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                            e.currentTarget.nextElementSibling?.classList.add('flex');
+                          }}
+                        />
+                      ) : null}
+                      <div className={`w-24 h-24 sm:w-20 sm:h-20 bg-blue-50 text-blue-600 rounded-xl items-center justify-center font-bold text-3xl sm:text-2xl border border-blue-100 shadow-sm flex-shrink-0 ${item.photoUrl ? 'hidden' : 'flex'}`}>
+                        {item.name.charAt(0)}
+                      </div>
                       <div>
                         <h3 className="text-xl font-bold text-gray-900 leading-tight">{item.name}</h3>
                         <p className="text-sm text-gray-500 mt-1 font-medium">{item.nim} — {item.programStudy}</p>

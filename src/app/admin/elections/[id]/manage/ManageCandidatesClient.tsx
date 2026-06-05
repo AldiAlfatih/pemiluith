@@ -66,12 +66,21 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
             <div key={c.id} className={`bg-white border p-4 rounded-2xl flex flex-col justify-between ${!c.isActive ? 'border-red-200 opacity-75' : 'border-slate-200'}`}>
               <div className="flex gap-4">
                 {c.photoUrl ? (
-                  <img src={c.photoUrl} alt={c.name} className="w-16 h-16 rounded-xl object-cover flex-shrink-0 border border-slate-200" />
-                ) : (
-                  <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center font-bold text-xl flex-shrink-0">
-                    {c.name.charAt(0)}
-                  </div>
-                )}
+                  <img 
+                    src={c.photoUrl} 
+                    alt={c.name} 
+                    className="w-16 h-16 rounded-xl object-cover flex-shrink-0 border border-slate-200" 
+                    onError={(e) => {
+                      // Fallback to showing initials if image fails to load
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                      e.currentTarget.nextElementSibling?.classList.add('flex');
+                    }}
+                  />
+                ) : null}
+                <div className={`w-16 h-16 bg-blue-100 text-blue-600 rounded-xl items-center justify-center font-bold text-xl flex-shrink-0 ${c.photoUrl ? 'hidden' : 'flex'}`}>
+                  {c.name.charAt(0)}
+                </div>
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
                     <h4 className="font-bold text-slate-800">{c.name}</h4>
