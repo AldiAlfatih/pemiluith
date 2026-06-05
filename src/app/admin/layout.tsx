@@ -3,6 +3,7 @@ import Link from "next/link"
 import { auth, signOut } from "@/auth"
 import { redirect } from "next/navigation"
 import { LayoutDashboard, Users, Vote, LogOut, Settings, Bell } from "lucide-react"
+import AdminSidebar from "@/components/AdminSidebar"
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await auth()
@@ -14,7 +15,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   return (
     <div className="flex bg-slate-50 font-sans text-slate-900">
       {/* Sidebar (Client Component for mobile responsiveness) */}
-      <AdminSidebar userName={session.user.name} />
+      <AdminSidebar userName={session.user.name || "Admin"} />
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-h-screen bg-slate-50 md:pt-0 pt-16">
