@@ -52,6 +52,7 @@ export async function updateStudent(id: string, formData: FormData) {
   const phoneNumber = formData.get("phoneNumber") as string
   const studentStatus = formData.get("studentStatus") as string
   const isActive = formData.get("isActive") === "true"
+  const password = formData.get("password") as string
 
   if (!nim || !name) throw new Error("NIM dan Nama wajib diisi")
 
@@ -59,16 +60,23 @@ export async function updateStudent(id: string, formData: FormData) {
   const existing = await prisma.user.findUnique({ where: { nim } })
   if (existing && existing.id !== id) throw new Error("NIM sudah digunakan oleh mahasiswa lain")
 
+  const dataToUpdate: any = {
+    nim,
+    name,
+    email: email || null,
+    phoneNumber: phoneNumber || null,
+    studentStatus: studentStatus || null,
+    isActive,
+  }
+
+  if (password) {
+    dataToUpdate.passwordHash = await bcrypt.hash(password, 10)
+    dataToUpdate.mustChangePassword = false // Since admin explicitly sets it
+  }
+
   await prisma.user.update({
     where: { id },
-    data: {
-      nim,
-      name,
-      email: email || null,
-      phoneNumber: phoneNumber || null,
-      studentStatus: studentStatus || null,
-      isActive,
-    }
+    data: dataToUpdate
   })
 
   revalidatePath("/admin/students")
