@@ -203,6 +203,10 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Misi <span className="text-slate-400 font-normal">(Opsional)</span></label>
                         <textarea name="mission" rows={4} placeholder="Tuliskan misi kandidat..." defaultValue={editData?.mission || ""} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none"></textarea>
                       </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">Pesan <span className="text-slate-400 font-normal">(Opsional)</span></label>
+                        <textarea name="description" rows={3} placeholder="Tuliskan pesan atau kutipan kandidat..." defaultValue={editData?.description || ""} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none"></textarea>
+                      </div>
                       
                       <div className="pt-2">
                         <h4 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-2 mb-3">Tautan & Media (Opsional)</h4>

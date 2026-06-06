@@ -144,6 +144,7 @@ export async function addCandidate(electionId: string, formData: FormData) {
   const programStudy = formData.get("programStudy") as string
   const vision = formData.get("vision") as string
   const mission = formData.get("mission") as string
+  const description = formData.get("description") as string
   const photoUrl = formData.get("photoUrl") as string
   const linkedinUrl = formData.get("linkedinUrl") as string
   const portfolioUrl = formData.get("portfolioUrl") as string
@@ -159,6 +160,7 @@ export async function addCandidate(electionId: string, formData: FormData) {
       programStudy,
       vision,
       mission,
+      description,
       photoUrl: photoUrl || null,
       linkedinUrl: linkedinUrl || null,
       portfolioUrl: portfolioUrl || null,
@@ -234,6 +236,7 @@ export async function updateCandidate(id: string, electionId: string, formData: 
   const programStudy = formData.get("programStudy") as string
   const vision = formData.get("vision") as string
   const mission = formData.get("mission") as string
+  const description = formData.get("description") as string
   const photoUrl = formData.get("photoUrl") as string
   const linkedinUrl = formData.get("linkedinUrl") as string
   const portfolioUrl = formData.get("portfolioUrl") as string
@@ -248,7 +251,8 @@ export async function updateCandidate(id: string, electionId: string, formData: 
       nim, 
       programStudy, 
       vision, 
-      mission,
+      mission, 
+      description,
       photoUrl: photoUrl || null,
       linkedinUrl: linkedinUrl || null,
       portfolioUrl: portfolioUrl || null,

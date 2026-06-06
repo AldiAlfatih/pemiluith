@@ -164,6 +164,13 @@ export default function VotingClientForm({
                         <p className="text-sm text-gray-700 mt-1 leading-relaxed whitespace-pre-line">{item.mission}</p>
                       </div>
                     )}
+                    
+                    {item.description && (
+                      <div className="mt-4 pt-4 border-t border-gray-100">
+                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Pesan</span>
+                        <p className="text-sm text-gray-700 mt-1 leading-relaxed italic">"{item.description}"</p>
+                      </div>
+                    )}
 
                     {(item.linkedinUrl || item.portfolioUrl || item.instagramUrl) && (
                       <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2 flex-wrap">
