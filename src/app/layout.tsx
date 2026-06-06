@@ -18,8 +18,6 @@ export const metadata: Metadata = {
   description: "Portal Pemilihan Elektronik Institut Teknologi Bacharuddin Jusuf Habibie",
 };
 
-import ClientGuardian from "@/components/ClientGuardian";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,9 +28,8 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col select-none">
+      <body className="min-h-full flex flex-col">
         <Providers>
-          <ClientGuardian />
           {children}
           {/* OgiTech Watermark */}
           <a 
