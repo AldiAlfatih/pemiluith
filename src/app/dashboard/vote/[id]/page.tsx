@@ -73,18 +73,21 @@ export default async function VotingPage({ params }: { params: Promise<{ id: str
   return (
     <div className="space-y-8 animate-in fade-in duration-500 max-w-5xl mx-auto">
       <div className="mb-8 border-b border-gray-200 pb-6">
-        <Link href="/dashboard" className="text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1.5 mb-6 inline-flex">
+        <Link 
+          href="/dashboard" 
+          className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md hover:-translate-x-1 mb-6"
+        >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Kembali
+          Kembali ke Dashboard
         </Link>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{election.title}</h1>
           {election.endAt && <CountdownTimer targetDate={election.endAt} />}
         </div>
-        {election.description && (
-          <p className="text-gray-600 mt-3 text-lg leading-relaxed max-w-3xl">{election.description}</p>
+        {election.description && election.description.replace(/\n?<!--\[HIDE_VOTES\]-->/g, "").trim() !== "" && (
+          <p className="text-gray-600 mt-3 text-lg leading-relaxed max-w-3xl">{election.description.replace(/\n?<!--\[HIDE_VOTES\]-->/g, "").trim()}</p>
         )}
       </div>
 

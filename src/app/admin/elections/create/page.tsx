@@ -106,7 +106,23 @@ export default function CreateElectionPage() {
               </div>
               <div>
                 <span className="block text-sm font-bold text-amber-900">Tandai sebagai "Coming Soon"</span>
-                <span className="block text-xs text-amber-700 mt-1">Jika dicentang, mahasiswa hanya akan melihat status "Segera Hadir". Anda tidak diwajibkan untuk mengisi waktu mulai dan selesai sekarang.</span>
+                <span className="block text-xs text-amber-700 mt-1">Jika dicentang, mahasiswa hanya akan melihat status "Segera Hadir". Anda tidak diwajibkan untuk mengisi waktu mulai dan selesai.</span>
+              </div>
+            </label>
+          </div>
+
+          <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <div className="flex items-center h-5 mt-1">
+                <input 
+                  type="checkbox" 
+                  name="hideCandidateVotes" 
+                  className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" 
+                />
+              </div>
+              <div>
+                <span className="block text-sm font-bold text-slate-800">Sembunyikan Perolehan Suara Kandidat/Opsi</span>
+                <span className="block text-xs text-slate-500 mt-1">Jika dicentang, total pemilih dan persentase kehadiran tetap tampil, tetapi angka perolehan spesifik untuk setiap orang/opsi akan disembunyikan di halaman hasil (baik bagi admin maupun mahasiswa).</span>
               </div>
             </label>
           </div>

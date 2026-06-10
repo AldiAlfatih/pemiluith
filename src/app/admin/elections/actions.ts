@@ -17,6 +17,16 @@ export async function createElection(formData: FormData) {
   const maxChoices = parseInt(formData.get("maxChoices") as string) || 1
   
   const isComingSoon = formData.get("isComingSoon") === "true" || formData.get("isComingSoon") === "on"
+  const hideCandidateVotes = formData.get("hideCandidateVotes") === "true" || formData.get("hideCandidateVotes") === "on"
+  
+  let finalDescription = description || ""
+  if (hideCandidateVotes) {
+    if (!finalDescription.includes("<!--[HIDE_VOTES]-->")) {
+      finalDescription += "\n<!--[HIDE_VOTES]-->"
+    }
+  } else {
+    finalDescription = finalDescription.replace(/\n?<!--\[HIDE_VOTES\]-->/g, "")
+  }
   
   let startAt: Date | null = null
   let endAt: Date | null = null
@@ -43,7 +53,7 @@ export async function createElection(formData: FormData) {
   const election = await prisma.election.create({
     data: {
       title,
-      description,
+      description: finalDescription,
       type,
       method,
       minChoices,
@@ -72,6 +82,16 @@ export async function updateElection(id: string, formData: FormData) {
   const maxChoices = parseInt(formData.get("maxChoices") as string) || 1
   
   const isComingSoon = formData.get("isComingSoon") === "true" || formData.get("isComingSoon") === "on"
+  const hideCandidateVotes = formData.get("hideCandidateVotes") === "true" || formData.get("hideCandidateVotes") === "on"
+  
+  let finalDescription = description || ""
+  if (hideCandidateVotes) {
+    if (!finalDescription.includes("<!--[HIDE_VOTES]-->")) {
+      finalDescription += "\n<!--[HIDE_VOTES]-->"
+    }
+  } else {
+    finalDescription = finalDescription.replace(/\n?<!--\[HIDE_VOTES\]-->/g, "")
+  }
   
   let startAt: Date | null = null
   let endAt: Date | null = null
@@ -99,7 +119,7 @@ export async function updateElection(id: string, formData: FormData) {
     where: { id },
     data: {
       title,
-      description,
+      description: finalDescription,
       type,
       method,
       minChoices,

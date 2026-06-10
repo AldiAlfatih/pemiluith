@@ -47,6 +47,13 @@ export default async function LiveResultsPage({ params }: { params: Promise<{ id
   const isCandidateType = election.type === "KETUA_ANGKATAN"
   const rawItems = isCandidateType ? election.candidates : election.options
   const totalVoters = election._count.votes
+  
+  const hideCandidateVotes = election.description?.includes("<!--[HIDE_VOTES]-->") || false
+  const cleanDescription = election.description ? election.description.replace(/\n?<!--\[HIDE_VOTES\]-->/g, "") : ""
+
+  const totalEligibleVoters = await prisma.user.count({ where: { role: "MAHASISWA" } })
+  const unvotedCount = Math.max(0, totalEligibleVoters - totalVoters)
+  const turnoutPercentage = totalEligibleVoters > 0 ? Math.round((totalVoters / totalEligibleVoters) * 100) : 0
 
   // Sort items by vote count descending
   const sortedItems = [...rawItems].sort((a, b) => b._count.voteDetails - a._count.voteDetails)
@@ -54,11 +61,14 @@ export default async function LiveResultsPage({ params }: { params: Promise<{ id
   return (
     <div className="space-y-8 animate-in fade-in duration-500 max-w-5xl mx-auto">
       <div className="mb-4">
-        <Link href={session.user.role === "ADMIN" ? "/admin/elections" : "/dashboard"} className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition-all">
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <Link 
+          href={session.user.role === "ADMIN" ? "/admin/elections" : "/dashboard"} 
+          className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 font-medium rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md hover:-translate-x-1"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Kembali ke Dashboard
+          Kembali ke {session.user.role === "ADMIN" ? "Panel Admin" : "Dashboard"}
         </Link>
       </div>
 
@@ -71,6 +81,9 @@ export default async function LiveResultsPage({ params }: { params: Promise<{ id
         </div>
         
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{election.title}</h1>
+        {cleanDescription && (
+          <p className="text-gray-600 text-lg max-w-3xl mb-6 mt-3">{cleanDescription}</p>
+        )}
         <div className="flex items-center gap-4 mt-4 text-sm font-medium text-gray-500">
           <span className="flex items-center gap-1.5">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
@@ -81,11 +94,49 @@ export default async function LiveResultsPage({ params }: { params: Promise<{ id
         </div>
       </div>
 
+      {/* Tingkat Partisipasi - ALways show */}
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-6 sm:p-8">
+        <h4 className="font-bold text-gray-800 mb-6 text-lg">Tingkat Partisipasi Pemilih</h4>
+        
+        <div className="flex justify-between items-end mb-3">
+          <span className="text-4xl font-black text-[#2563EB]">{turnoutPercentage}%</span>
+          <span className="text-sm font-medium text-gray-500 mb-1">{totalVoters} dari {totalEligibleVoters} Mahasiswa</span>
+        </div>
+        
+        <div className="h-6 w-full bg-gray-100 rounded-full overflow-hidden flex items-center shadow-inner relative">
+          <div 
+            className="h-full bg-gradient-to-r from-blue-500 to-[#2563EB] transition-all duration-1000 ease-out"
+            style={{ width: `${turnoutPercentage}%` }}
+          />
+        </div>
+        
+        <div className="flex justify-between mt-4 text-sm font-medium">
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-[#2563EB]"></span>
+            <span className="text-gray-700">Sudah Memilih ({totalVoters})</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-gray-300"></span>
+            <span className="text-gray-700">Belum Memilih ({unvotedCount})</span>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-10">
-          <h3 className="text-lg font-bold text-gray-900 mb-8">Perolehan Suara</h3>
+        <div className="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-gray-200 p-8">
+          <h3 className="text-xl font-bold text-gray-900 mb-8 border-b border-gray-100 pb-4">Perolehan Suara</h3>
           
-          {sortedItems.length === 0 ? (
+          {hideCandidateVotes ? (
+            <div className="py-8 flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 border border-blue-100">
+                <svg className="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Perolehan Suara Kandidat Dirahasiakan</h3>
+              <p className="text-gray-500 max-w-md">Panitia telah mengatur agar detail perolehan suara masing-masing kandidat/opsi tidak ditampilkan secara publik untuk pemilihan ini.</p>
+            </div>
+          ) : sortedItems.length === 0 ? (
             <p className="text-gray-500 text-center py-8">Belum ada data kandidat/opsi.</p>
           ) : (
             <div className="space-y-6">

@@ -164,7 +164,6 @@ export default function VotingClientForm({
                         <p className="text-sm text-gray-700 mt-1 leading-relaxed whitespace-pre-line">{item.mission}</p>
                       </div>
                     )}
-                    
                     {item.description && (
                       <div className="mt-4 pt-4 border-t border-gray-100">
                         <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Pesan</span>
@@ -229,10 +228,10 @@ export default function VotingClientForm({
                         </div>
                       )}
 
-                      {item.reason && (
-                        <div>
-                          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Alasan Pengusulan</span>
-                          <p className="text-sm text-gray-700 leading-relaxed italic text-gray-600">{item.reason}</p>
+                      {item.description && (
+                        <div className="mt-4">
+                          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Deskripsi</span>
+                          <p className="text-sm text-gray-700 leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-100">"{item.description}"</p>
                         </div>
                       )}
                     </div>

@@ -44,12 +44,21 @@ export default function ResultsClient({ election, resultsData, voters, totalVote
     }).join(", ")
   }
 
+  const hideCandidateVotes = election.description?.includes("<!--[HIDE_VOTES]-->") || false
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
       {/* Left Column - Progress Bars */}
       <div className="lg:col-span-7 space-y-6">
         <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
-          <h2 className="text-lg font-bold text-slate-800 mb-6">Perolehan Suara</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <h2 className="text-lg font-bold text-slate-800">Perolehan Suara</h2>
+            {hideCandidateVotes && (
+              <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100 flex items-center gap-1.5">
+                <EyeOff size={14} /> Disembunyikan dari Mahasiswa
+              </span>
+            )}
+          </div>
           
           <div className="space-y-6">
             {sortedItems.map((item, index) => {

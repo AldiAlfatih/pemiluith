@@ -52,7 +52,7 @@ export default function EditElectionClientForm({ election }: { election: any }) 
           
           <div className="space-y-2">
             <label className="block text-sm font-bold text-slate-700">Deskripsi / Keterangan</label>
-            <textarea name="description" defaultValue={election.description || ""} rows={3} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"></textarea>
+            <textarea name="description" defaultValue={election.description ? election.description.replace(/\n?<!--\[HIDE_VOTES\]-->/g, "") : ""} rows={3} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"></textarea>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -107,6 +107,23 @@ export default function EditElectionClientForm({ election }: { election: any }) 
               <div>
                 <span className="block text-sm font-bold text-amber-900">Tandai sebagai "Coming Soon"</span>
                 <span className="block text-xs text-amber-700 mt-1">Jika dicentang, mahasiswa hanya akan melihat status "Segera Hadir". Anda tidak diwajibkan untuk mengisi waktu mulai dan selesai.</span>
+              </div>
+            </label>
+          </div>
+
+          <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <div className="flex items-center h-5 mt-1">
+                <input 
+                  type="checkbox" 
+                  name="hideCandidateVotes" 
+                  defaultChecked={election.description?.includes('<!--[HIDE_VOTES]-->') || false}
+                  className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" 
+                />
+              </div>
+              <div>
+                <span className="block text-sm font-bold text-slate-800">Sembunyikan Perolehan Suara Kandidat/Opsi</span>
+                <span className="block text-xs text-slate-500 mt-1">Jika dicentang, total pemilih dan persentase kehadiran tetap tampil, tetapi angka perolehan spesifik untuk setiap orang/opsi akan disembunyikan di halaman hasil (baik bagi admin maupun mahasiswa).</span>
               </div>
             </label>
           </div>
