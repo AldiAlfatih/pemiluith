@@ -19,8 +19,14 @@ export default async function VotingPage({ params }: { params: Promise<{ id: str
   const election = await prisma.election.findUnique({
     where: { id },
     include: {
-      candidates: { orderBy: { orderNumber: "asc" } },
-      options: { orderBy: { orderNumber: "asc" } }
+      candidates: { 
+        where: { isActive: true },
+        orderBy: { orderNumber: "asc" } 
+      },
+      options: { 
+        where: { isActive: true },
+        orderBy: { orderNumber: "asc" } 
+      }
     }
   })
 

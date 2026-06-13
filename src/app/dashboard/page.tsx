@@ -113,7 +113,7 @@ export default async function StudentDashboardPage({
                       }`}>
                         {isActive ? (
                           <span className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" /> SEDANG BERLANGSUNG</span>
-                        ) : isComingSoonStatus ? "⏳ SEGERA HADIR" : isUpcoming ? "⏳ AKAN DATANG" : "⚫ SELESAI"}
+                        ) : isComingSoonStatus ? "SEGERA HADIR" : isUpcoming ? "AKAN DATANG" : "SELESAI"}
                       </span>
                       {hasVoted && (
                         <span className="flex items-center gap-1.5 text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap">

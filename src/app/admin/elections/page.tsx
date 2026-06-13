@@ -63,7 +63,7 @@ export default async function ElectionsPage() {
                         isUpcoming ? "bg-amber-50 text-amber-700 border-amber-200" :
                         "bg-slate-50 text-slate-600 border-slate-200"
                       }`}>
-                        {isActive ? "● AKTIF" : isComingSoonStatus ? "⏳ COMING SOON" : isUpcoming ? "⏳ MENUNGGU" : "✓ SELESAI"}
+                        {isActive ? "● AKTIF" : isComingSoonStatus ? "COMING SOON" : isUpcoming ? "MENUNGGU" : "✓ SELESAI"}
                       </span>
                       <span className="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-purple-50 text-purple-700 border border-purple-200">
                         {election.type.replace(/_/g, " ")}

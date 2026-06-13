@@ -299,15 +299,15 @@ export async function toggleCandidateStatus(id: string, electionId: string, isAc
 
 export async function deleteOption(id: string, electionId: string) {
   const session = await auth()
-  if (!session || session.user.role !== "ADMIN") throw new Error("Unauthorized")
+  if (!session || session.user.role !== "ADMIN") return { success: false, error: "Unauthorized" }
 
   try {
     await prisma.electionOption.delete({ where: { id } })
   } catch (error: any) {
     if (error.code === 'P2003') {
-      throw new Error("Tidak dapat menghapus opsi ini karena sudah ada suara yang masuk. Silakan gunakan fitur Nonaktifkan.")
+      return { success: false, error: "Tidak dapat menghapus opsi ini karena sudah ada suara yang masuk. Silakan gunakan fitur Nonaktifkan." }
     }
-    throw error
+    return { success: false, error: error.message || "Terjadi kesalahan saat menghapus opsi." }
   }
 
   revalidatePath(`/admin/elections/${electionId}/manage`)
@@ -316,15 +316,15 @@ export async function deleteOption(id: string, electionId: string) {
 
 export async function deleteCandidate(id: string, electionId: string) {
   const session = await auth()
-  if (!session || session.user.role !== "ADMIN") throw new Error("Unauthorized")
+  if (!session || session.user.role !== "ADMIN") return { success: false, error: "Unauthorized" }
 
   try {
     await prisma.candidate.delete({ where: { id } })
   } catch (error: any) {
     if (error.code === 'P2003') {
-      throw new Error("Tidak dapat menghapus kandidat ini karena sudah ada suara yang masuk. Silakan gunakan fitur Nonaktifkan.")
+      return { success: false, error: "Tidak dapat menghapus kandidat ini karena sudah ada suara yang masuk. Silakan gunakan fitur Nonaktifkan." }
     }
-    throw error
+    return { success: false, error: error.message || "Terjadi kesalahan saat menghapus kandidat." }
   }
 
   revalidatePath(`/admin/elections/${electionId}/manage`)

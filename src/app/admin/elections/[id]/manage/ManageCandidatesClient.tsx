@@ -83,7 +83,10 @@ export default function ManageCandidatesClient({ electionId, candidates }: { ele
     if (!itemToDelete) return
     try {
       setLoading(true)
-      await deleteCandidate(itemToDelete, electionId)
+      const res = await deleteCandidate(itemToDelete, electionId)
+      if (res && res.error) {
+        throw new Error(res.error)
+      }
       setItemToDelete(null)
     } catch (err: any) {
       alert("Gagal menghapus: " + err.message)

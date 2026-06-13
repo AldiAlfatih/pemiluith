@@ -45,7 +45,10 @@ export default function ManageOptionsClient({ electionId, options }: { electionI
     if (!itemToDelete) return
     try {
       setLoading(true)
-      await deleteOption(itemToDelete, electionId)
+      const res = await deleteOption(itemToDelete, electionId)
+      if (res && res.error) {
+        throw new Error(res.error)
+      }
       setItemToDelete(null)
     } catch (err: any) {
       alert("Gagal menghapus: " + err.message)
